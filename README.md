@@ -278,21 +278,6 @@ python monster_cards.py monsters.json --theme fantasy --pdf cards.pdf
 - Use `--full-bleed` to maximize card size
 - Try `--cut-lines` to visualize the grid
 
-## Project Structure
-
-```
-dndcardgen/
-├── monster_cards.py         # Main script
-├── requirements.txt         # Python dependencies
-├── example_monsters.json    # Sample monster data
-├── README.md               # This file
-├── fonts/                  # Theme fonts (user-provided)
-├── images/                 # Monster portraits
-│   └── kelpie.jpg
-├── out_cards/              # Generated PNG output
-└── parchment.jpg           # Optional background textures
-```
-
 ## Dependencies
 
 - **Pillow** (PIL Fork): Image processing and rendering
@@ -302,32 +287,3 @@ Install with:
 ```bash
 pip install pillow reportlab
 ```
-
-## License
-
-This project is open source. Feel free to modify and distribute.
-
-## Credits
-
-Created for D&D 5th Edition monster management and quick reference during gameplay.
-
-## Contributing
-
-Contributions welcome! Areas for improvement:
-- Additional font themes
-- Custom card layouts
-- Export formats (CSV, XML)
-- Web interface
-- Token generation mode
-
-## Support
-
-For issues or questions:
-1. Check the troubleshooting section
-2. Review `example_monsters.json` for proper JSON format
-3. Run with `--demo` to verify installation
-4. Open an issue on GitHub
-
----
-
-**Happy Gaming!** 🎲
