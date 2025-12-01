@@ -1,0 +1,3 @@
+# Ignore generated card outputs
+/out_cards/*.png
+/out_cards/*.pdf
