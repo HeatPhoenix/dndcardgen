@@ -312,14 +312,38 @@ def measure_wrapped_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.F
 
 
 def shrink_to_fit(draw: ImageDraw.ImageDraw, text: str, font_path: Optional[str], start_size: int, max_width: int, max_height: int, min_size: int = 10) -> Tuple[ImageFont.FreeTypeFont, List[str]]:
-    size = start_size
-    while size >= min_size:
-        font = fit_font(font_path, size)
+    # Backwards-compatible: perform a fast binary search for the largest font that fits
+    lo = min_size
+    hi = max(min_size, start_size)
+    best_font = fit_font(font_path, min_size)
+    best_lines: List[str] = textwrap.wrap(text, width=40)
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        font = fit_font(font_path, mid)
         _, h, lines = measure_wrapped_text(draw, text, font, max_width)
         if h <= max_height:
-            return font, lines
-        size -= 1
-    return fit_font(font_path, min_size), textwrap.wrap(text, width=40)
+            best_font, best_lines = font, lines
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return best_font, best_lines
+
+
+def best_fit_wrapped(draw: ImageDraw.ImageDraw, text: str, font_path: Optional[str], max_width: int, max_height: int, min_size: int, max_size: int) -> Tuple[ImageFont.FreeTypeFont, List[str]]:
+    """Return the largest font (min..max) whose wrapped text height fits within max_height."""
+    lo, hi = min_size, max_size
+    best_font = fit_font(font_path, min_size)
+    best_lines: List[str] = textwrap.wrap(text, width=40)
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        font = fit_font(font_path, mid)
+        _, h, lines = measure_wrapped_text(draw, text, font, max_width)
+        if h <= max_height:
+            best_font, best_lines = font, lines
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    return best_font, best_lines
 
 # --------------------------- Card Renderer -----------------------------------
 
@@ -533,11 +557,19 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     culinary_h = max(0, usable_h - assigned)
     line_gap = 2
 
-    # Lore block (italic) - shrink-to-fit
+    # Lore block (italic) - maximize font while fitting
     ty = section_header("Lore", ty)
     lore_start = ty
-    # Slightly larger starting size; shrink-to-fit ensures it stays within block
-    lore_font, lore_lines = shrink_to_fit(draw, mon.lore or "", lore_font_path, start_size=int(max(18, int(LH * 0.068)) * FONT_SCALE), max_width=text_col_w, max_height=lore_h)
+    lore_font, lore_lines = best_fit_wrapped(
+        draw,
+        mon.lore or "",
+        lore_font_path,
+        max_width=text_col_w,
+        max_height=lore_h,
+        min_size=10,
+        # Allow very large attempts; binary search will settle to the largest that fits
+        max_size=int(max(12, lore_h))
+    )
     italic_fill = (50, 40, 30, 255)
     lore_line_h = draw.textbbox((0, 0), "Ag", font=lore_font)[3] - draw.textbbox((0, 0), "Ag", font=lore_font)[1]
     drawn_h = 0
@@ -552,21 +584,25 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Gap between blocks
     ty += inner_margin
-    # Stats block (non-header content shrink-to-fit by adjusting font size to fit items in rows)
+    # Stats block (maximize font while ensuring items fit in two columns)
     ty = section_header("Stats", ty)
-    # Choose a font size that allows all items to fit into the two-column block height when possible
-    # Start a bit larger; shrink loop will reduce until all rows fit
-    size = int(max(14, int(LH * 0.058)) * FONT_SCALE)
+    # Binary search for largest font where rows_fit * 2 >= number of items
     items = list((mon.statblock or {}).items())
     kv_pad = 6
-    while size > 8:
-        stats_font = fit_font(stats_font_path, size)
-        sample_h = draw.textbbox((0, 0), "Ag", font=stats_font)[3] - draw.textbbox((0, 0), "Ag", font=stats_font)[1]
-        rows_fit = max(1, (stats_h // (sample_h + kv_pad)))
-        if rows_fit * 2 >= len(items):
-            break
-        size -= 1
-    stats_font = fit_font(stats_font_path, size)
+    def rows_for(sz: int) -> int:
+        f = fit_font(stats_font_path, sz)
+        sh = draw.textbbox((0, 0), "Ag", font=f)[3] - draw.textbbox((0, 0), "Ag", font=f)[1]
+        return max(1, (stats_h // (sh + kv_pad)))
+    lo, hi = 10, int(max(12, stats_h))
+    best_sz = lo
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        if rows_for(mid) * 2 >= len(items):
+            best_sz = mid
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    stats_font = fit_font(stats_font_path, best_sz)
     col_w = text_col_w // 2
     sx = text_col_x
     sy = ty
@@ -585,7 +621,7 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Gap between blocks
     ty += inner_margin
-    # Abilities block (non-header content shrink-to-fit)
+    # Abilities block (maximize font while fitting total wrapped lines)
     ty = section_header("Abilities", ty)
     abil_start = ty
     # Determine a font size that fits all ability texts within abilities_h when possible
@@ -599,12 +635,17 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
             _, _, lines = measure_wrapped_text(draw, (ab.get("text", "").strip()), font, text_col_w - name_w)
             total += len(lines) * (lh + line_gap) + 2
         return total
-
-    # Start a bit larger; shrink loop will reduce until content fits
-    size = int(max(14, int(LH * 0.058)) * FONT_SCALE)
-    while size > 8 and abilities_total_height(fit_font(stats_font_path, size)) > abilities_h:
-        size -= 1
-    body_font = fit_font(stats_font_path, size)
+    lo, hi = 10, int(max(12, abilities_h))
+    best_sz = lo
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        f = fit_font(stats_font_path, mid)
+        if abilities_total_height(f) <= abilities_h:
+            best_sz = mid
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    body_font = fit_font(stats_font_path, best_sz)
     name_color = (30, 20, 10, 255)
     text_color = (50, 40, 30, 255)
     line_h = draw.textbbox((0, 0), "Ag", font=body_font)[3] - draw.textbbox((0, 0), "Ag", font=body_font)[1]
@@ -633,7 +674,7 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Gap between blocks
     ty += inner_margin
-    # Actions block (non-header content shrink-to-fit)
+    # Actions block (maximize font while fitting total wrapped lines)
     ty = section_header("Actions", ty)
     act_start = ty
     def actions_total_height(font: ImageFont.FreeTypeFont) -> int:
@@ -647,11 +688,17 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
             total += len(lines) * (lh + line_gap) + 2
         return total
 
-    # Start a bit larger; shrink loop will reduce until content fits
-    size = int(max(14, int(LH * 0.058)) * FONT_SCALE)
-    while size > 8 and actions_total_height(fit_font(stats_font_path, size)) > actions_h:
-        size -= 1
-    body_font = fit_font(stats_font_path, size)
+    lo, hi = 10, int(max(12, actions_h))
+    best_sz = lo
+    while lo <= hi:
+        mid = (lo + hi) // 2
+        f = fit_font(stats_font_path, mid)
+        if actions_total_height(f) <= actions_h:
+            best_sz = mid
+            lo = mid + 1
+        else:
+            hi = mid - 1
+    body_font = fit_font(stats_font_path, best_sz)
     used_h = 0
     for ac in mon.actions or []:
         if used_h >= actions_h:
@@ -680,8 +727,16 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     # Culinary Use block
     if mon.culinary_use:
         ty = section_header("Culinary Use", ty)
-        # Expand font to fill block height as much as possible (slightly larger start)
-        cul_font, lines = shrink_to_fit(draw, mon.culinary_use, lore_font_path, start_size=int(max(22, int(LH * 0.078)) * FONT_SCALE), max_width=text_col_w, max_height=culinary_h)
+        # Expand font to fill block height as much as possible (maximize within block)
+        cul_font, lines = best_fit_wrapped(
+            draw,
+            mon.culinary_use,
+            lore_font_path,
+            max_width=text_col_w,
+            max_height=culinary_h,
+            min_size=10,
+            max_size=int(max(12, culinary_h))
+        )
         cul_line_h = draw.textbbox((0, 0), "Ag", font=cul_font)[3] - draw.textbbox((0, 0), "Ag", font=cul_font)[1]
         used_h = 0
         for line in lines:
