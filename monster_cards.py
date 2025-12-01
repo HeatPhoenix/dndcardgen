@@ -59,7 +59,7 @@ DEFAULT_GRID_ROWS = 3
 DEFAULT_CARDS_PER_PAGE = DEFAULT_GRID_COLS * DEFAULT_GRID_ROWS
 DEFAULT_MARGIN = 90  # pixels at 300dpi (increased)
 DEFAULT_GUTTER = 45  # pixels at 300dpi (increased)
-FONT_SCALE = 3.0  # Global font scale multiplier per user request
+FONT_SCALE = 1.0  # Reduce global scale; headers fixed-size, bodies shrink-to-fit
 
 # ----------------------------- Utilities -------------------------------------
 
@@ -344,6 +344,8 @@ class Monster:
     id: Optional[str]
     name: str
     profile_image: Optional[str]
+    size: Optional[str]
+    creature_type: Optional[str]
     lore: str
     culinary_use: Optional[str]
     statblock: Dict[str, str]
@@ -418,7 +420,35 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     # Now the main rounded image
     draw_rounded_image(base, profile, img_box, radius=24)
 
-    # Title at top of text column (much larger per request, with width/height constraints)
+    # Title at top of text column (fixed-size header; no shrink-to-fit, ellipsize if needed)
+    def ellipsize(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont, max_width: int) -> str:
+        if draw.textbbox((0,0), text, font=font)[2] <= max_width:
+            return text
+        ell = "…"
+        lo, hi = 0, len(text)
+        best = 0
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            s = text[:mid] + ell
+            if draw.textbbox((0,0), s, font=font)[2] <= max_width:
+                best = mid
+                lo = mid + 1
+            else:
+                hi = mid - 1
+        return (text[:best] + ell) if best > 0 else ell
+
+    title_size = max(22, int(LH * 0.10))
+    title_font = fit_font(name_font_path, int(title_size * FONT_SCALE))
+    title_text = mon.name or "Unknown"
+    title_text = ellipsize(draw, title_text, title_font, text_col_w)
+    th = draw.textbbox((0, 0), title_text, font=title_font)[3] - draw.textbbox((0, 0), title_text, font=title_font)[1]
+    ty = y
+    # Fake bold for title
+    draw.text((text_col_x, ty), title_text, font=title_font, fill=(30, 20, 10, 255))
+    draw.text((text_col_x+1, ty), title_text, font=title_font, fill=(30, 20, 10, 255))
+    ty += th + int(pad * 0.25)
+
+    # Creature type line (e.g., "Medium, Beast") in italics under the title
     def shrink_single_line_to_fit(text: str, font_path: Optional[str], start_size: int, max_width: int, max_height: int) -> Tuple[ImageFont.FreeTypeFont, int]:
         size = start_size
         while size > 6:
@@ -433,21 +463,25 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
         h = draw.textbbox((0, 0), text, font=f)[3] - draw.textbbox((0, 0), text, font=f)[1]
         return f, h
 
-    base_title_size = max(36, int(LH * 0.12))
-    desired_title_size = int(base_title_size * 6 * FONT_SCALE)
-    title_text = mon.name or "Unknown"
-    max_title_h = int(content_h * 0.25)
-    title_font, th = shrink_single_line_to_fit(title_text, name_font_path, desired_title_size, text_col_w, max_title_h)
-    ty = y
-    # Fake bold for title
-    draw.text((text_col_x, ty), title_text, font=title_font, fill=(30, 20, 10, 255))
-    draw.text((text_col_x+1, ty), title_text, font=title_font, fill=(30, 20, 10, 255))
-    ty += th + int(pad * 0.25)
+    parts: List[str] = []
+    if mon.size:
+        parts.append(mon.size)
+    if mon.creature_type:
+        parts.append(mon.creature_type)
+    creature_line = ", ".join([p for p in parts if p])
+    if creature_line:
+        # Make creature line ~1/2 of the original size (original was ~LH*0.06)
+        base_ct_size = max(8, int(LH * 0.03))
+        ct_font, ct_h = shrink_single_line_to_fit(creature_line, lore_font_path, int(base_ct_size * FONT_SCALE), text_col_w, int(content_h * 0.12))
+        draw.text((text_col_x, ty), creature_line, font=ct_font, fill=(50, 40, 30, 255))
+        ty += ct_h + int(pad * 0.20)
 
     # Section header style (text column width) — headers larger than body
-    header_font_size = int(max(26, int(LH * 0.08)) * 3 * FONT_SCALE)
+    # Fixed-size section headers (no shrink)
+    header_font_size = int(max(18, int(LH * 0.06)) * FONT_SCALE)
     header_font = fit_font(stats_font_path, header_font_size)
-    header_bar_h = max(12, int(LH * 0.02))
+    # Make the brown header bars thinner
+    header_bar_h = max(8, int(LH * 0.015))
     header_gap = int(pad * 0.15)
     # Estimate header text height for allocation using a representative string
     _hb = draw.textbbox((0, 0), "Ag", font=header_font)
@@ -499,10 +533,11 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     culinary_h = max(0, usable_h - assigned)
     line_gap = 2
 
-    # Lore block (italic)
+    # Lore block (italic) - shrink-to-fit
     ty = section_header("Lore", ty)
     lore_start = ty
-    lore_font, lore_lines = shrink_to_fit(draw, mon.lore or "", lore_font_path, start_size=int(max(22, int(LH * 0.07)) * FONT_SCALE), max_width=text_col_w, max_height=lore_h)
+    # Slightly larger starting size; shrink-to-fit ensures it stays within block
+    lore_font, lore_lines = shrink_to_fit(draw, mon.lore or "", lore_font_path, start_size=int(max(18, int(LH * 0.068)) * FONT_SCALE), max_width=text_col_w, max_height=lore_h)
     italic_fill = (50, 40, 30, 255)
     lore_line_h = draw.textbbox((0, 0), "Ag", font=lore_font)[3] - draw.textbbox((0, 0), "Ag", font=lore_font)[1]
     drawn_h = 0
@@ -517,14 +552,24 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Gap between blocks
     ty += inner_margin
-    # Stats block
+    # Stats block (non-header content shrink-to-fit by adjusting font size to fit items in rows)
     ty = section_header("Stats", ty)
-    stats_font = fit_font(stats_font_path, int(max(18, int(LH * 0.065)) * FONT_SCALE))
+    # Choose a font size that allows all items to fit into the two-column block height when possible
+    # Start a bit larger; shrink loop will reduce until all rows fit
+    size = int(max(14, int(LH * 0.058)) * FONT_SCALE)
+    items = list((mon.statblock or {}).items())
     kv_pad = 6
+    while size > 8:
+        stats_font = fit_font(stats_font_path, size)
+        sample_h = draw.textbbox((0, 0), "Ag", font=stats_font)[3] - draw.textbbox((0, 0), "Ag", font=stats_font)[1]
+        rows_fit = max(1, (stats_h // (sample_h + kv_pad)))
+        if rows_fit * 2 >= len(items):
+            break
+        size -= 1
+    stats_font = fit_font(stats_font_path, size)
     col_w = text_col_w // 2
     sx = text_col_x
     sy = ty
-    items = list((mon.statblock or {}).items())
     sample_h = draw.textbbox((0, 0), "Ag", font=stats_font)[3] - draw.textbbox((0, 0), "Ag", font=stats_font)[1]
     rows_fit = max(1, (stats_h // (sample_h + kv_pad)))
     max_items = rows_fit * 2
@@ -540,10 +585,26 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Gap between blocks
     ty += inner_margin
-    # Abilities block
+    # Abilities block (non-header content shrink-to-fit)
     ty = section_header("Abilities", ty)
     abil_start = ty
-    body_font = fit_font(stats_font_path, int(max(18, int(LH * 0.06)) * FONT_SCALE))
+    # Determine a font size that fits all ability texts within abilities_h when possible
+    def abilities_total_height(font: ImageFont.FreeTypeFont) -> int:
+        lh = draw.textbbox((0, 0), "Ag", font=font)[3] - draw.textbbox((0, 0), "Ag", font=font)[1]
+        total = 0
+        for ab in mon.abilities or []:
+            name = (ab.get("name", "").strip() + ": ") if ab.get("name") else ""
+            name_w = draw.textbbox((0, 0), name, font=font)
+            name_w = (name_w[2] - name_w[0]) if name else 0
+            _, _, lines = measure_wrapped_text(draw, (ab.get("text", "").strip()), font, text_col_w - name_w)
+            total += len(lines) * (lh + line_gap) + 2
+        return total
+
+    # Start a bit larger; shrink loop will reduce until content fits
+    size = int(max(14, int(LH * 0.058)) * FONT_SCALE)
+    while size > 8 and abilities_total_height(fit_font(stats_font_path, size)) > abilities_h:
+        size -= 1
+    body_font = fit_font(stats_font_path, size)
     name_color = (30, 20, 10, 255)
     text_color = (50, 40, 30, 255)
     line_h = draw.textbbox((0, 0), "Ag", font=body_font)[3] - draw.textbbox((0, 0), "Ag", font=body_font)[1]
@@ -572,9 +633,25 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Gap between blocks
     ty += inner_margin
-    # Actions block
+    # Actions block (non-header content shrink-to-fit)
     ty = section_header("Actions", ty)
     act_start = ty
+    def actions_total_height(font: ImageFont.FreeTypeFont) -> int:
+        lh = draw.textbbox((0, 0), "Ag", font=font)[3] - draw.textbbox((0, 0), "Ag", font=font)[1]
+        total = 0
+        for ac in mon.actions or []:
+            name = (ac.get("name", "").strip() + ": ") if ac.get("name") else ""
+            name_w = draw.textbbox((0, 0), name, font=font)
+            name_w = (name_w[2] - name_w[0]) if name else 0
+            _, _, lines = measure_wrapped_text(draw, (ac.get("text", "").strip()), font, text_col_w - name_w)
+            total += len(lines) * (lh + line_gap) + 2
+        return total
+
+    # Start a bit larger; shrink loop will reduce until content fits
+    size = int(max(14, int(LH * 0.058)) * FONT_SCALE)
+    while size > 8 and actions_total_height(fit_font(stats_font_path, size)) > actions_h:
+        size -= 1
+    body_font = fit_font(stats_font_path, size)
     used_h = 0
     for ac in mon.actions or []:
         if used_h >= actions_h:
@@ -603,8 +680,8 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     # Culinary Use block
     if mon.culinary_use:
         ty = section_header("Culinary Use", ty)
-        # Expand font to fill block height as much as possible
-        cul_font, lines = shrink_to_fit(draw, mon.culinary_use, lore_font_path, start_size=int(max(22, int(LH * 0.07)) * FONT_SCALE), max_width=text_col_w, max_height=culinary_h)
+        # Expand font to fill block height as much as possible (slightly larger start)
+        cul_font, lines = shrink_to_fit(draw, mon.culinary_use, lore_font_path, start_size=int(max(22, int(LH * 0.078)) * FONT_SCALE), max_width=text_col_w, max_height=culinary_h)
         cul_line_h = draw.textbbox((0, 0), "Ag", font=cul_font)[3] - draw.textbbox((0, 0), "Ag", font=cul_font)[1]
         used_h = 0
         for line in lines:
@@ -806,11 +883,16 @@ def read_monsters(path: Optional[str], demo: bool, images_dir: str) -> List[Mons
             info(f"Image for '{name}': '{declared_image}' not found; using '{os.path.relpath(resolved_image)}'")
         if not declared_image and resolved_image:
             info(f"Auto-selected image for '{name}': {os.path.relpath(resolved_image)}")
-        monsters.append(
+    # Parse optional creature size/type; accept either separate fields or a combined
+    size = (m.get("size") or "").strip() or None
+    ctype = (m.get("creature_type") or m.get("type") or "").strip() or None
+    monsters.append(
             Monster(
                 id=m.get("id"),
                 name=name,
                 profile_image=resolved_image,
+        size=size,
+        creature_type=ctype,
                 lore=m.get("lore") or "",
                 culinary_use=m.get("culinary_use"),
                 statblock=m.get("statblock") or {},

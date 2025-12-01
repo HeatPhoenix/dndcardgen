@@ -3,6 +3,8 @@
     "id": "13",
     "name": "Kelpie",
     "profile_image": "kelpie.jpg",
+    "size": "Medium",
+    "type": "Beast",
     "lore": "Kelpies are territorial water predators that use cunning and deception to lure prey. They are intelligent enough to assess threats and will attempt to drag creatures into water where they have advantage. Their fat is valuable for hair oils and soaps of exceptional quality.",
     "culinary_use": "The meat is much like a mix between tuna and horsemeat, a delectable delicacy if it can be obtained.",
     "statblock": {
