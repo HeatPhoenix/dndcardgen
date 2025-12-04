@@ -1,0 +1,659 @@
+[
+  {
+    "id": "walking_mushroom",
+    "name": "Walking Mushroom",
+    "profile_image": null,
+    "size": "Medium",
+    "type": "Plant",
+    "lore": "Walking Mushrooms are the dungeon's natural air purifiers and decomposers. They're not aggressive, but their spores are irritating and mildly toxic. The dungeon ecosystem depends on their presence. Due to the nature of the fibres in their bodies, horizontal and diagonal slashes are less effective on them.",
+    "culinary_use": "Mushroom steaks (texture of portobello, nutty flavor when cooked with adventurer's butter or monster fat). Grants temporary HP equal to 1d6 when eaten. The spore-producing cap can be dried and used as a seasoning—grants advantage on next Constitution save for 1 floor.",
+    "statblock": {
+      "Armor Class": "12",
+      "Hit Points": "22 (3d10 + 6)",
+      "Speed": "0 ft.",
+      "STR": "10 (+0)",
+      "DEX": "6 (-2)",
+      "CON": "14 (+2)",
+      "INT": "2 (-4)",
+      "WIS": "8 (-1)",
+      "CHA": "3 (-4)",
+      "Condition Immunities": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned, Prone",
+      "Senses": "Blindsight 60 ft., passive Perception 9",
+      "Challenge": "1/4 (50 XP)"
+    },
+    "abilities": [],
+    "actions": [
+      {
+        "name": "Spore Cloud (Recharge 5–6)",
+        "text": "Each creature within 10 feet of the mushroom must make a DC 12 Constitution save. On failure, a creature takes 5 (2d4) poison damage and is poisoned for 1 minute. On success, it takes half damage and isn't poisoned."
+      }
+    ],
+    "background": "#ddeedd",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "slime",
+    "name": "Slime",
+    "profile_image": null,
+    "size": "Small",
+    "type": "Ooze",
+    "lore": "Slimes in the Melini Crypt are fist- to head-sized blobs of translucent jelly that cling to ceilings, urns, and damp corners. They are mostly passive parasites that hunt by smell, dropping onto warm, breathing creatures that wander beneath them. On an unlucky day, they fall straight onto an adventurer's head, suffocating and dissolving them from the outside in. Their outer layer is a caustic digestive fluid, while their tiny organs float inside like pale, jellyfish-like knots. They dislike fire and are fragile when struck in the core or blasted with magic.",
+    "culinary_use": "Slime Jelly (1–2 portions). If cooked with citrus and dried properly, this becomes a chewy, high-quality binding ingredient.",
+    "statblock": {
+      "Armor Class": "8",
+      "Hit Points": "13 (3d6)",
+      "Speed": "10 ft., climb 10 ft.",
+      "STR": "12 (+1)",
+      "DEX": "6 (−2)",
+      "CON": "14 (+2)",
+      "INT": "1 (−5)",
+      "WIS": "8 (−1)",
+      "CHA": "2 (−4)",
+      "Immunities": "acid, poison; blinded, charmed, deafened, frightened, prone",
+      "Vulnerabilities": "fire",
+      "Senses": "blindsight 30 ft. (blind beyond this radius), passive Perception 9",
+      "Challenge": "1/4 (50 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Amorphous",
+        "text": "The slime can move through a space as narrow as 4 inches wide without squeezing."
+      },
+      {
+        "name": "Ceiling Lurker",
+        "text": "If the slime spends at least 1 minute motionless on a ceiling or high surface, it is indistinguishable from wet stone or moss. Creatures that pass directly beneath must succeed on a DC 13 Wisdom (Perception) check to notice it."
+      },
+      {
+        "name": "Parasitic Hunter",
+        "text": "The slime can sense the presence of a breathing creature within 30 feet by its exhalations, even if the creature is invisible or obscured, unless the creature is holding its breath."
+      },
+      {
+        "name": "Fire‑Shy",
+        "text": "If the slime takes fire damage, it has disadvantage on its next attack roll before the end of its next turn. If reduced to 0 hit points by fire, it shrivels into a rubbery, edible mass."
+      },
+      {
+        "name": "Core Strike",
+        "text": "When a creature scores a critical hit on the slime with a piercing or slashing weapon, the blow ruptures a vital organ. The slime takes an extra 5 (2d4) damage."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Pseudopod",
+        "text": "Melee Weapon Attack: +3 to hit, reach 5 ft., one target. Hit: 6 (1d8+2) bludgeoning damage plus 3 (1d6) acid damage."
+      },
+      {
+        "name": "Drop Attack (Recharge 5–6)",
+        "text": "If the slime is clinging to a ceiling or higher surface and a creature moves directly beneath it, the slime can let itself fall as a special attack. The target must succeed on a DC 13 Dexterity saving throw or the slime lands on the target’s head or upper body and attaches. On a failure, the target takes 5 (1d10) acid damage and begins suffocating as the slime seals over their face. On a success, the target takes only 3 (1d6) acid damage and the slime lands in an adjacent space."
+      }
+    ],
+    "background": "#ddeeff",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "mandrake",
+    "name": "Mandrake",
+    "profile_image": null,
+    "size": "Small",
+    "type": "Plant",
+    "lore": "Mandrakes are intelligent plant creatures with deep roots in dungeon soil. They're territorial but not inherently evil. Many are content to remain rooted and allow travelers to pass if undisturbed. However, they scream when threatened—a sound that echoes through the dungeon and attracts other creatures.",
+    "culinary_use": "Mandrake root (tastes like potato mixed with parsnip; grants advantage on Constitution saves for 1 floor when eaten). The root is harvested after the plant is killed or carefully extracted. The taste is improved if prepared with cream or butter. High-quality mandrake dishes are considered delicacies even on the surface.",
+    "statblock": {
+      "Armor Class": "13",
+      "Hit Points": "22 (3d10 + 6)",
+      "Speed": "0 ft. (rooted)",
+      "STR": "10 (+0)",
+      "DEX": "8 (-1)",
+      "CON": "14 (+2)",
+      "INT": "12 (+1)",
+      "WIS": "13 (+1)",
+      "CHA": "14 (+2)",
+      "Immunities": "Poison",
+      "Senses": "Darkvision 60 ft., passive Perception 11",
+      "Languages": "None",
+      "Challenge": "1/2 (100 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Uprooted",
+        "text": "If uprooted, even unsuccessfully, the mandrake cannot make any actions, or move any distance."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Terrifying Scream (Recharge 5–6)",
+        "text": "Each creature within 30 feet of the mandrake that can hear it must make a DC 13 Wisdom save. On failure, a creature is frightened for 1 minute. A creature can repeat the save at the end of each of its turns, ending the effect on success. If a creature's save is successful or the effect ends for it, the creature is immune to this mandrake's scream for 24 hours."
+      },
+      {
+        "name": "Root Lash",
+        "text": "Melee Weapon Attack: +3 to hit, reach 10 ft., one target. Hit: 6 (2d4 + 2) bludgeoning damage, and the target is grappled (escape DC 12)."
+      }
+    ],
+    "background": "#eaddff",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "living_armor",
+    "name": "Living Armor",
+    "profile_image": null,
+    "size": "Medium",
+    "type": "Construct",
+    "lore": "Living Armor resemble hollow suits of armor that move by themselves, and until recently were thought to be actual suits of armor animated by an unknown sorcerer. However, they are in actuality a kind of mollusk that mimics armor. They consist of colonies of individuals that gather together when older, linking up their bodies, and then move by contracting themselves like muscles. Like land snails, they drown if placed in water.",
+    "culinary_use": "Living Armor are similar to mollusks, and can be cooked as such. If the helmet is cooked whole, however, the smell will get sealed inside and it will taste rather musty.",
+    "statblock": {
+      "Armor Class": "18",
+      "Hit Points": "33 (6d10 + 6)",
+      "Speed": "25 ft.",
+      "STR": "16 (+3)",
+      "DEX": "10 (+0)",
+      "CON": "12 (+1)",
+      "INT": "3 (-4)",
+      "WIS": "12 (+1)",
+      "CHA": "1 (-5)",
+      "Damage Immunities": "Poison, Psychic",
+      "Damage Resistances": "Nonmagical bludgeoning, piercing, and slashing",
+      "Condition Immunities": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+      "Senses": "Blindsight 60 ft., passive Perception 11",
+      "Challenge": "1 (200 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Stewed Armor",
+        "text": "If fire is in contact with the armor, the molluscs inside will cook through and instantly be defeated (and edible)."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The armor makes two attacks."
+      },
+      {
+        "name": "Slam",
+        "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage."
+      },
+      {
+        "name": "Halberd",
+        "text": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 12 (2d8 + 3) slashing damage."
+      }
+    ],
+    "background": "#ddddee",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "harpy",
+    "name": "Harpy",
+    "profile_image": null,
+    "size": "Medium",
+    "type": "Monstrosity",
+    "lore": "Harpies build crude nests in the high branches and crevices of the Spire Forest, weaving bones, rope scraps, and stolen cloth into platforms that hang above the dungeon floor. They lay clutches of large, pale eggs, brooding them against a warm patch of bare skin on their torsos that resembles human breasts, and defend their nesting sites with startling ferocity. Most of the time, however, they act as opportunistic scavengers—following groups of adventurers or larger monsters and swooping in to steal food, gear, and anything shiny once the real fighting is over.",
+    "culinary_use": "Dungeon cooks generally avoid butchering harpies themselves due to their disturbingly human torsos and faces, but their eggs are a prized ingredient among more pragmatic adventurers. A single harpy egg is large enough to feed several people and has a rich, slightly gamey flavor that works well in rolled omelets, baked custards, or layered with monster meats in piccata‑style dishes. Properly handled, harpy eggs can be whisked into silky savory custards or sweet puddings; among delvers, the ethical debate over eating 'bird‑people' tends to end the moment someone serves a perfectly cooked harpy‑egg tamagoyaki at camp.",
+    "statblock": {
+      "Armor Class": "13 (feathers and tough skin)",
+      "Hit Points": "22 (4d8+4)",
+      "Speed": "20 ft., fly 50 ft.",
+      "STR": "12 (+1)",
+      "DEX": "15 (+2)",
+      "CON": "12 (+1)",
+      "INT": "6 (−2)",
+      "WIS": "10 (+0)",
+      "CHA": "12 (+1)",
+      "Saving Throws": "Dex +4",
+      "Skills": "Perception +2",
+      "Senses": "passive Perception 12",
+      "Languages": "understands Common, cannot speak it clearly",
+      "Challenge": "1 (200 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Flock Tactics",
+        "text": "While at least one conscious harpy ally is within 5 feet of the harpy’s target, the harpy has advantage on melee attack rolls against that target."
+      },
+      {
+        "name": "Swooping Harrier",
+        "text": "The harpy does not provoke opportunity attacks when it flies out of a creature’s reach, as long as it moved at least 20 feet in a straight line during its turn."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The harpy makes two attacks: one with its talons and one with its beak."
+      },
+      {
+        "name": "Talons",
+        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d8+3) slashing damage."
+      },
+      {
+        "name": "Beak",
+        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 5 (1d6+2) piercing damage."
+      },
+      {
+        "name": "Raking Dive (Recharge 5–6)",
+        "text": "While flying, the harpy dives at a creature within 30 feet of its flight path. The target must succeed on a DC 13 Dexterity saving throw or take 10 (3d6) slashing damage and be pushed up to 5 feet in a direction of the harpy’s choice. A creature pushed off a narrow bridge or ledge begins to fall as normal. On a successful save, the target takes half damage and is not pushed."
+      }
+    ],
+    "background": "#f0e0e8",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "kelpie_equine",
+    "name": "Kelpie",
+    "profile_image": null,
+    "size": "Large",
+    "type": "Monstrosity",
+    "lore": "Kelpies are territorial water predators that use cunning and deception to lure prey. They are intelligent enough to assess threats and will attempt to drag creatures into water where they have advantage. Their fat is valuable for hair oils and soaps of exceptional quality.",
+    "culinary_use": "The meat is much like a mix between tuna and horsemeat, a delectable delicacy if it can be obtained.",
+    "statblock": {
+      "Armor Class": "13",
+      "Hit Points": "52 (8d10+16)",
+      "Speed": "20 ft., swim 40 ft.",
+      "STR": "16 (+3)",
+      "DEX": "14 (+2)",
+      "CON": "145(+2)",
+      "INT": "4 (-3)",
+      "WIS": "12 (+1)",
+      "CHA": "6 (-2)",
+      "Immunities": "-",
+      "Condition Immunities": "-",
+      "Senses": "Darkvision 60 ft., passive Perception 10",
+      "Challenge": "3 (700 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Amorphous",
+        "text": "The ooze can occupy another creature's space and vice versa."
+      },
+      {
+        "name": "Transparent",
+        "text": "Even when the ooze is in plain sight, it takes a successful Wisdom (Perception) check to spot an ooze that hasn't moved. A creature that tries to enter the ooze's space while unaware of it is surprised by the ooze."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The Kelpie makes one bite attack and one tail attack."
+      },
+      {
+        "name": "Bite",
+        "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 12 (2d8 + 3) piercing damage."
+      },
+      {
+        "name": "Tail",
+        "text": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage, and the target is grappled (escape DC 13). Until this grapple ends, the target is restrained. The Kelpie can have up to two creatures grappled at once, and when it moves, grappled creatures move with it."
+      },
+      {
+        "name": "Drag Into Water (Recharge 5-6)",
+        "text": "The Kelpie attempts to pull a creature it can see within 10 feet into water it can access. The target must make a DC 13 Strength save. On a failure, the creature is pulled up to 10 feet toward the water and knocked prone."
+      }
+    ],
+    "background": "#cceef6",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "mermaid",
+    "name": "Mermaid",
+    "profile_image": null,
+    "size": "Medium",
+    "type": "Humanoid",
+    "lore": "Mermaids build hidden alcoves in underwater caverns and lakes. They sing to lure surface dwellers and adventurers, drawing them into water where they can drag victims beneath the waves with brutal surprise. Though their attacks are light, the danger lies in their mesmerizing song and the deceptive beauty that belies their deadly nature.",
+    "culinary_use": "As Mermaids are demihumans, they should not be eaten. It is unlikely your party will consent to eating mermaids unless things have gotten very dire.",
+    "statblock": {
+      "Armor Class": "13",
+      "Hit Points": "45 (7d10 + 14)",
+      "Speed": "10 ft., swim 40 ft.",
+      "STR": "18 (+4)",
+      "DEX": "13 (+1)",
+      "CON": "14 (+2)",
+      "INT": "8 (-1)",
+      "WIS": "10 (+0)",
+      "CHA": "9 (-1)",
+      "Senses": "Darkvision 60 ft., passive Perception 10",
+      "Languages": "Abyssal, Aquan",
+      "Challenge": "2 (450 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Amphibious",
+        "text": "The mermaid can breathe air and water."
+      },
+      {
+        "name": "Siren’s Grace",
+        "text": "The mermaid has advantage on Dexterity (Acrobatics) checks and attack rolls while in water."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The Mermaid makes two attacks: one bite and one claws."
+      },
+      {
+        "name": "Bite",
+        "text": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage."
+      },
+      {
+        "name": "Claws",
+        "text": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 9 (1d10 + 4) slashing damage."
+      },
+      {
+        "name": "Mesmerizing Song (Recharge 5–6)",
+        "text": "The mermaid sings a haunting melody audible up to 300 feet. Each creature of choice within 60 feet that can hear the song must succeed on a DC 13 Wisdom saving throw or be charmed for 3 turns. While charmed, the creature is incapacitated and moves toward the mermaid on its turn. Affected creatures can repeat the save at the end of their turns."
+      }
+    ],
+    "background": "#cceeff",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "dryad",
+    "name": "Dryad",
+    "profile_image": null,
+    "size": "Medium",
+    "type": "Plant",
+    "lore": "A plant monster that resembles the body of a beautiful young humanoid, deeply attuned to the forest and dungeon flora around it.",
+    "culinary_use": null,
+    "statblock": {
+      "Armor Class": "15 (natural armor)",
+      "Hit Points": "71 (11d10 + 22)",
+      "Speed": "30 ft.",
+      "STR": "12 (+1)",
+      "DEX": "14 (+2)",
+      "CON": "15 (+2)",
+      "INT": "12 (+1)",
+      "WIS": "14 (+2)",
+      "CHA": "12 (+1)",
+      "Skills": "Insight +4, Nature +3, Perception +4",
+      "Damage Resistances": "Bludgeoning, piercing, and slashing from nonmagical weapons",
+      "Senses": "Darkvision 60 ft., passive Perception 14",
+      "Languages": "Common",
+      "Challenge": "5 (1,800 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Magic Resistance",
+        "text": "The Dryad has advantage on saving throws against spells and magical effects."
+      },
+      {
+        "name": "Rooted Stance",
+        "text": "While the Dryad hasn't moved on its turn, it has advantage on saving throws against effects that would move it, knock it prone, or otherwise displace it."
+      },
+      {
+        "name": "Pollen Burst",
+        "text": "Upon death through physical damage, the dryad releases a cloud of pollen in a 15-foot cone. Each creature in the area must make a DC 13 Constitution saving throw, taking 14 (4d6) poison damage and becoming incapacitated for 2 turns on a failed save, or taking half damage and not being incapacitated on a success. A creature can repeat the saving throw at the end of each of its turns, ending the effect on a success."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Vine Lash",
+        "text": "Melee Weapon Attack: +4 to hit, reach 15 ft., one target. Hit: 9 (2d8 + 2) slashing damage, and the target is grappled (escape DC 12). Until this grapple ends, the target is restrained. The Dryad can have up to three creatures grappled at once."
+      }
+    ],
+    "background": "#d9f5e5",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "cockatrice",
+    "name": "Cockatrice",
+    "profile_image": null,
+    "size": "Medium",
+    "type": "Monstrosity",
+    "lore": "These monsters resemble basilisks, but they're several times more dangerous. The snake head has pit organs and can detect its prey's location by sensing temperature. Once its poison is in your system, you'll turn to stone.",
+    "culinary_use": null,
+    "statblock": {
+      "Armor Class": "14",
+      "Hit Points": "59 (7d12 + 21)",
+      "Speed": "20 ft., fly 40 ft.",
+      "STR": "14 (+2)",
+      "DEX": "15 (+2)",
+      "CON": "16 (+3)",
+      "INT": "2 (-4)",
+      "WIS": "12 (+1)",
+      "CHA": "4 (-3)",
+      "Skills": "Perception +4",
+      "Senses": "Darkvision 120 ft. (can see heat signatures), passive Perception 14",
+      "Challenge": "5 (1,800 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Heat Sense",
+        "text": "The Cockatrice can sense the body heat of creatures within 60 feet as if it has truesight."
+      },
+      {
+        "name": "Reactive Strikes",
+        "text": "For each creature within 5 feet of the Cockatrice that isn't its ally, the Cockatrice can make a talon attack as a reaction when the creature moves away from it."
+      },
+      {
+        "name": "Legendary Resistance (1/day)",
+        "text": "If the Cockatrice fails a saving throw, it can choose to succeed instead."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The Cockatrice makes one front attack and one back attack."
+      },
+      {
+        "name": "Peck",
+        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 2) piercing damage, and the target must succeed on a DC 14 Constitution save or begin to turn to stone and is restrained. The creature must repeat the save at the start of its next turn, becoming petrified on a failure or ending the effect on a success."
+      },
+      {
+        "name": "Talons",
+        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 8 (2d4 + 2) slashing damage, and the target is grappled (escape DC 12). If the target is a Medium or smaller creature, it is also restrained until the grapple ends."
+      },
+      {
+        "name": "Venomous Spit (Recharge 5-6)",
+        "text": "Ranged Weapon Attack: +4 to hit, range 30 ft., one target. Hit: 11 (2d10) poison damage, and the target must succeed on a DC 14 Constitution save or begin to turn to stone as with the bite."
+      }
+    ],
+    "background": "#f5f0d0",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "minotaur",
+    "name": "Minotaur",
+    "profile_image": null,
+    "size": "Large",
+    "type": "Monstrosity",
+    "lore": "Large, powerful bipedal bovines used as cattle on the surface. They walk upright on two legs and give birth to live calves. Though not truly intelligent, they are comfortable gripping tools or crude weapons in their hands.",
+    "culinary_use": "Minotaur can be butchered much like beef; the ribs roast into rich racks of red meat, while the tougher shank and shoulder are ideal for slow-cooked stews or ground into Hamburg steaks.",
+    "statblock": {
+      "Armor Class": "15 (thick hide, hardened muscle)",
+      "Hit Points": "95 (10d12 + 30)",
+      "Speed": "40 ft.",
+      "STR": "20 (+5)",
+      "DEX": "12 (+1)",
+      "CON": "16 (+3)",
+      "INT": "6 (−2)",
+      "WIS": "10 (+0)",
+      "CHA": "8 (−1)",
+      "Skills": "Athletics +8, Perception +3",
+      "Senses": "Darkvision 60 ft., passive Perception 13",
+      "Languages": "Understands Common, cannot speak it clearly",
+      "Challenge": "5 (1,800 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Labyrinth Strider",
+        "text": "Difficult terrain made of rubble, broken masonry, or dungeon debris costs the minotaur no extra movement."
+      },
+      {
+        "name": "Tool Savvy",
+        "text": "The minotaur can wield simple weapons and improvised tools; it has advantage on Strength checks to break doors, chests, or restraints using whatever it can grab."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Gore",
+        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (2d8 + 6) piercing damage; if the minotaur moved at least 20 ft. straight toward the target this turn, the target takes an extra 7 (2d6) damage and must succeed on a DC 15 Strength save or be knocked prone."
+      },
+      {
+        "name": "Hammerfist",
+        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) bludgeoning damage. On a hit, the target cannot take reactions until the start of its next turn as the blow rattles bone and armor."
+      },
+      {
+        "name": "Rend and Roar (Recharge 5–6)",
+        "text": "The minotaur makes one Gore and one Hammerfist attack against different targets it can see. Each creature hit must succeed on a DC 13 Wisdom save or be frightened of the minotaur until the end of its next turn."
+      }
+    ],
+    "background": "#fbe4d5",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "thistle_lunatic_magician",
+    "name": "Thistle",
+    "profile_image": null,
+    "size": "Medium",
+    "type": "Humanoid",
+    "lore": "Thistle is a powerful and unstable archmage who serves as the dungeon's final master. His magic reshapes the battlefield and toys with the minds of intruders, turning the entire lair into a shifting deathtrap.",
+    "culinary_use": null,
+    "statblock": {
+      "Armor Class": "16 (magical robes)",
+      "Hit Points": "130 (20d8 + 40)",
+      "Speed": "30 ft.",
+      "STR": "10 (+0)",
+      "DEX": "12 (+1)",
+      "CON": "14 (+2)",
+      "INT": "18 (+4)",
+      "WIS": "16 (+3)",
+      "CHA": "17 (+3)",
+      "Saving Throws": "INT +7, WIS +6",
+      "Skills": "Arcana +7, Insight +6, Deception +6",
+      "Immunities": "Charmed, Exhaustion",
+      "Resistances": "Cold, fire, lightning (within the dungeon)",
+      "Senses": "Truesight 120 ft., passive Perception 13",
+      "Languages": "All",
+      "Challenge": "12 (8,400 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Legendary Actions (3/turn)",
+        "text": "Thistle can take 3 legendary actions per round, choosing from Move, Spell (spending points equal to spell level), or Teleport (dimension door)."
+      },
+      {
+        "name": "Lair Actions",
+        "text": "On initiative count 20 (losing ties), Thistle can summon dungeon creatures or manipulate the environment by reshaping terrain, moving platforms, or opening and closing doors."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "Thistle uses Spellcasting and may use Legendary Actions."
+      },
+      {
+        "name": "Arcane Bolt",
+        "text": "Melee Spell Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) psychic damage."
+      },
+      {
+        "name": "Spellcasting",
+        "text": "Thistle is a 9th-level spellcaster. His spell save DC is 15. He has the following spells prepared: At will: mage hand, mage hand legerdemain, prestidigitation, message; 1st level (4 slots): shield, magic missile, sleep, misdirection; 2nd level (3 slots): scorching ray, mirror image, misty step; 3rd level (3 slots): counterspell, fireball, summon undead; 4th level (3 slots): dimension door, polymorph, greater invisibility; 5th level (1 slot): telekinesis."
+      },
+      {
+        "name": "Psychological Attack (Recharge 5-6)",
+        "text": "Each creature Thistle can see within 60 feet must make a DC 15 Wisdom save. On failure, the creature has disadvantage on attack rolls and saves until the start of its next turn."
+      }
+    ],
+    "background": "#e0e0ff",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "red_dragon_midpoint_boss",
+    "name": "Red Dragon",
+    "profile_image": null,
+    "size": "Huge",
+    "type": "Dragon",
+    "lore": "This midpoint boss encounter is meant to be dramatic and cruel rather than a simple slugfest. The red dragon is a towering engine of fire and malice, reminding delvers that the dungeon itself is an uncaring predator.",
+    "culinary_use": null,
+    "statblock": {
+      "Armor Class": "17",
+      "Hit Points": "110 (16d20 + 10)",
+      "Speed": "40 ft., fly 80 ft.",
+      "STR": "25 (+7)",
+      "DEX": "10 (+0)",
+      "CON": "21 (+5)",
+      "INT": "16 (+3)",
+      "WIS": "13 (+1)",
+      "CHA": "21 (+5)",
+      "Saving Throws": "DEX +4, CON +9, WIS +5, CHA +9",
+      "Skills": "Insight +5, Perception +9",
+      "Resistances": "Fire",
+      "Immunities": "Fire, Paralysis, Sleep",
+      "Senses": "Truesight 120 ft., passive Perception 19",
+      "Languages": "Draconic",
+      "Challenge": "17 (18,000 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Legendary Actions (3/turn)",
+        "text": "The Dragon can use Detect, Move, or Attack as legendary actions between turns."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The Dragon makes three attacks: one bite and two claw attacks."
+      },
+      {
+        "name": "Bite",
+        "text": "Melee Weapon Attack: +11 to hit, reach 10 ft., one target. Hit: 18 (2d10 + 5) piercing damage."
+      },
+      {
+        "name": "Claw",
+        "text": "Melee Weapon Attack: +11 to hit, reach 5 ft., one target. Hit: 14 (2d6 + 5) slashing damage."
+      },
+      {
+        "name": "Tail",
+        "text": "Melee Weapon Attack: +11 to hit, reach 15 ft., one target. Hit: 16 (2d8 + 5) bludgeoning damage."
+      },
+      {
+        "name": "Fire Breath (Recharge 5–6)",
+        "text": "The dragon exhales fire in a 60-foot cone. Each creature in that area must make a DC 17 Dexterity save, taking 54 (12d8) fire damage on a failed save, or half as much on a successful one."
+      }
+    ],
+    "background": "#ffd4c4",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  }
+]

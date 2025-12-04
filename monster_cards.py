@@ -94,18 +94,31 @@ def resolve_profile_image(name: str, declared_path: Optional[str], images_dir: s
         candidate = os.path.join(images_dir, declared_path)
         if os.path.isfile(candidate):
             return candidate
-    # 3) Try guessed filenames based on name variants under images_dir
+    # 3) Try guessed filenames based on name variants under images_dir.
+    #    We additionally generate punctuation-stripped variants so that
+    #    e.g. "living_armor.jpg" and "livingarmor.jpg" are considered
+    #    equivalent when matching.
+    def normalize_basename(n: str) -> str:
+        # Remove all characters that are not alphanumeric or underscore.
+        # This keeps things stable while ignoring punctuation like dashes
+        # or apostrophes.
+        return "".join(ch for ch in n if ch.isalnum() or ch == "_")
+
     def variants(n: str) -> List[str]:
         s = slugify(n)
-        return list(dict.fromkeys([
+        raw_variants = [
             n,
             n.strip(),
             n.replace(" ", "_"),
-            n.replace(" ", "-") ,
+            n.replace(" ", "-"),
             n.lower(),
             s,
             s.lower(),
-        ]))
+        ]
+        # Also include punctuation-stripped versions of each base.
+        punct_stripped = [normalize_basename(v) for v in raw_variants]
+        return list(dict.fromkeys(raw_variants + punct_stripped))
+
     bases = variants(name)
     for base in bases:
         for ext in common_exts:
@@ -929,6 +942,7 @@ def read_monsters(path: Optional[str], demo: bool, images_dir: str) -> List[Mons
         if not name:
             warn(f"Monster index {i} missing name; skipping.")
             continue
+
         # Resolve profile image path using default images_dir and declared value
         declared_image = m.get("profile_image")
         resolved_image = resolve_profile_image(name, declared_image, images_dir)
@@ -938,16 +952,18 @@ def read_monsters(path: Optional[str], demo: bool, images_dir: str) -> List[Mons
             info(f"Image for '{name}': '{declared_image}' not found; using '{os.path.relpath(resolved_image)}'")
         if not declared_image and resolved_image:
             info(f"Auto-selected image for '{name}': {os.path.relpath(resolved_image)}")
-    # Parse optional creature size/type; accept either separate fields or a combined
-    size = (m.get("size") or "").strip() or None
-    ctype = (m.get("creature_type") or m.get("type") or "").strip() or None
-    monsters.append(
+
+        # Parse optional creature size/type; accept either separate fields or a combined
+        size = (m.get("size") or "").strip() or None
+        ctype = (m.get("creature_type") or m.get("type") or "").strip() or None
+
+        monsters.append(
             Monster(
                 id=m.get("id"),
                 name=name,
                 profile_image=resolved_image,
-        size=size,
-        creature_type=ctype,
+                size=size,
+                creature_type=ctype,
                 lore=m.get("lore") or "",
                 culinary_use=m.get("culinary_use"),
                 statblock=m.get("statblock") or {},
@@ -957,6 +973,7 @@ def read_monsters(path: Optional[str], demo: bool, images_dir: str) -> List[Mons
                 fonts_overrides=(m.get("fonts") or {}),
             )
         )
+
     return monsters
 
 
