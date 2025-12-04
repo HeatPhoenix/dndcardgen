@@ -1,0 +1,170 @@
+[
+  {
+    "id": "1",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "WEATHERED LONGSWORD",
+    "effect": "A well-maintained longsword with a comfortable grip. A fighter gains a +1 bonus to attack rolls with this weapon for one encounter.",
+    "lore": "This blade has seen many battles. Its balance suggests a master swordsmith once held the tool that forged it. The leather grip is worn but sturdy—someone loved this weapon once.",
+  "image": "treasure_img/weatheredsword.png"
+  },
+  {
+    "id": "2",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "STURDY DAGGER",
+    "effect": "A practical dagger with a sharp edge. A rogue gains advantage on the next attack roll made with this weapon.",
+    "lore": "Small, efficient, and deadly—exactly as its maker intended. This dagger has been sharpened a thousand times, yet the blade refuses to dull.",
+  "image": "treasure_img/sturdydagger.png"
+  },
+  {
+    "id": "3",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "WOODEN BOW",
+    "effect": "A reasonably well-crafted bow with a bundle of 20 arrows. Grants +1 to damage rolls with ranged attacks for the next three encounters.",
+    "lore": "The wood is light and supple. The string is taut and true. Whoever owned this bow understood the need for precision at a distance.",
+  "image": "treasure_img/woodenbow.png"
+  },
+  {
+    "id": "4",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "CRACKED STAFF",
+    "effect": "A staff of darkwood with a visible crack running down its length. A wizard may cast one spell at +1 to the damage roll before the staff crumbles to dust.",
+    "lore": "This staff once channeled immense magical power. The crack suggests it was pushed beyond its limits—perhaps in a desperate battle, or a final act of defiance.",
+  "image": "treasure_img/crackedstaff.png"
+  },
+  {
+    "id": "5",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "BLESSED HOLY SYMBOL",
+    "effect": "A silver holy symbol of exceptional craftsmanship. A cleric gains advantage on the next Healing Word or cure spell they cast.",
+    "lore": "Worn smooth by generations of prayers, this symbol radiates quiet faith. It has been pressed to foreheads in blessing, clutched in fear, and offered in sacrifice.",
+  "image": "treasure_img/holysymbol.png"
+  },
+  {
+    "id": "6",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "SEALED BARREL OF SALTED BEEF",
+    "effect": "A large sealed barrel containing preserved beef. Restore the Meal Meter by 2 points. The party gains +1 to Constitution saves for one floor due to hearty nutrition.",
+    "lore": "The salt preserves everything—meat, memory, hope. This barrel has survived the dungeon's decay. Whoever packed it knew their craft.",
+  "image": "treasure_img/saltedbeef.png"
+  },
+  {
+    "id": "7",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "SACK OF GRAIN",
+    "effect": "A sturdy burlap sack filled with dried grain and flour. Restore the Meal Meter by 1 point. The grain can be ground and cooked into a simple but filling meal.",
+    "lore": "Golden and clean, untouched by mold or rot. This sack represents survival itself—the most basic, most essential resource in any dungeon.",
+  "image": "treasure_img/bagofgrain.png"
+  },
+  {
+    "id": "8",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "WHEELS OF HARD CHEESE",
+    "effect": "Three wheels of aged cheese, wrapped in cloth. Restore the Meal Meter by 2 points. The cheese's sharp flavor grants advantage on the next Charisma check.",
+    "lore": "The cheese has aged to perfection in this cool, dark place. Its complexity suggests years of careful aging. Eating it feels like tasting history.",
+  "image": "treasure_img/hardcheese.png"
+  },
+  {
+    "id": "9",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "HEALING DRAUGHT",
+    "effect": "A vial of shimmering blue potion. When consumed, the drinker regains 2d6 + 2 hit points. Can be used once.",
+    "lore": "The liquid catches the light strangely. Its origin is unknown, but its purpose is clear: to mend what is broken.",
+  "image": "treasure_img/healingdraught.png"
+  },
+  {
+    "id": "10",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "ROPE AND GRAPPLING HOOK",
+    "effect": "50 feet of high-quality rope and a sturdy grappling hook. The party gains advantage on the next Athletics or Acrobatics check involving climbing or swinging.",
+    "lore": "The rope is new, well-maintained, and coiled with expert care. It has never been used. Perhaps it was meant for this very moment.",
+  "image": "treasure_img/ropegrapplinghook.png"
+  },
+  {
+    "id": "11",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "MAP FRAGMENT",
+    "effect": "An old, water-stained map showing part of the dungeon's layout. The party may re-roll one failed Navigation or Investigation check on the current floor.",
+    "lore": "The parchment is yellowed but legible. It shows passages and chambers long forgotten. Someone mapped this place before—and left clues for those who came after.",
+  "image": "treasure_img/mapfragment.png"
+  },
+  {
+    "id": "12",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "CELEBRATORY WINE",
+    "effect": "A bottle of exceptionally fine wine, marked with an ancient vintage. When consumed as a group, the entire party's morale improves. Restore the Meal Meter by 3 points and grant advantage on the next social check.",
+    "lore": "The label is faded but the wine is perfect—untouched by time, as if the dungeon itself has been preserving it. Drinking it feels like a small defiance of darkness.",
+  "image": "treasure_img/celebratorywine.png"
+  },
+  {
+    "id": "13",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "GOLDEN IDOL (SMALL)",
+    "effect": "A small golden statuette, finely crafted. It has no magical properties but is worth 150 gold pieces to any merchant. The party may sell it for supplies.",
+    "lore": "The gold is pure and the craftsmanship exquisite. It was clearly treasured once. Now it sits here, waiting for someone worthy to claim it.",
+  "image": "treasure_img/goldenidol.png"
+  },
+  {
+    "id": "14",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "MYSTERIOUS HERB BUNDLE",
+    "effect": "A bundle of dried herbs tied with cord. When brewed into tea and consumed by the entire party, restore the Meal Meter by 1 point and grant resistance to poison damage for one hour.",
+    "lore": "The herbs smell strange and wonderful. Their origin is a mystery, but their effect is undeniable. Perhaps they grew in some forgotten corner of the dungeon.",
+  "image": "treasure_img/mysteriousherb.png"
+  },
+  {
+    "id": "15",
+    "title": "TREASURE CHEST REWARD CARD (TRAP)",
+  "name": "POISON GAS TRAP",
+    "effect": "As you open the chest, noxious purple gas erupts. Each party member must make a DC 14 Constitution save. On a failure, they take 2d6 poison damage and are poisoned for 1 minute. On a success, they take half damage and aren't poisoned.",
+    "lore": "The chest was a trap all along. Someone, long ago, filled it with death itself—perhaps as a final defense, or perhaps out of pure malice.",
+  "image": "treasure_img/poisongas.png"
+  },
+  {
+    "id": "16",
+    "title": "TREASURE CHEST REWARD CARD (TRAP)",
+  "name": "EXPLOSIVE RUNES",
+    "effect": "The chest is inscribed with magical runes that trigger when opened. Each party member within 10 feet must make a DC 15 Dexterity save, taking 3d6 fire damage on a failed save, or half as much on a successful one.",
+    "lore": "Arcane symbols cover the inside of the chest, glowing faintly. This was a sorcerer's trap—designed to destroy rather than preserve.",
+  "image": "treasure_img/explosiverunes.png"
+  },
+  {
+    "id": "17",
+    "title": "TREASURE CHEST REWARD CARD (CURSE)",
+  "name": "CURSED AMULET",
+    "effect": "A beautiful amulet lies within. Any creature who picks it up must make a DC 13 Wisdom save. On a failure, they are cursed and have disadvantage on all saving throws for the next 24 hours. The curse can be removed with Remove Curse or similar magic.",
+    "lore": "The amulet is gorgeous—almost hypnotic. But something about it feels wrong. The craftsmanship is perfect, but the intent behind it is twisted.",
+  "image": "treasure_img/cursedamulet.png"
+  },
+  {
+    "id": "18",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "RESURRECTION FLOWER",
+    "effect": "A single flower with luminous petals, preserved perfectly. If a party member dies before the end of the next dungeon floor, this flower can be used to restore them to 1 hit point. It crumbles to dust after use.",
+    "lore": "The flower shouldn't exist in a place like this. Yet it thrives, perfect and beautiful. It feels like a gift from something ancient and kind.",
+  "image": "treasure_img/resurrectionflower.png"
+  },
+  {
+    "id": "19",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "ENCHANTED LANTERN",
+    "effect": "A brass lantern that burns with a cold, blue flame. It sheds bright light in a 30-foot radius. While lit, all party members gain advantage on Perception checks to spot hidden creatures or objects.",
+    "lore": "The flame burns without fuel, eternally. Those who pass through its light seem to see things others miss. This lantern was crafted by someone who valued truth above all else.",
+  "image": "treasure_img/enchantedlantern.png"
+  },
+  {
+    "id": "20",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "ADVENTURER'S JOURNAL",
+    "effect": "A leather-bound journal filled with notes from previous adventurers. Reading it grants the party advantage on the next Wisdom (Insight) check and reveals one useful piece of information about dungeon hazards.",
+    "lore": "Page after page is filled with careful handwriting—observations, warnings, and stories. These words come from those who came before, and they still have power to guide the living.",
+  "image": "treasure_img/adventurerjournal.png"
+  },
+  {
+    "id": "21",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "KENSUKE",
+    "effect": "A sword taken from a defeated Living Armor. It seems to be infested by a helpful colony of Living Armor that now considers it your kin. Wielding it provides +3 on initiative rolls, and the player cannot be ambushed or surprised.",
+    "lore": "The sword's inhabitant, aptly named Kensuke, seems to be able to sense monsters. A soft rattling sound only the wielder can hear is heard when enemies are nearby.",
+  "image": "treasure_img/kensuke.png"
+  }
+]
