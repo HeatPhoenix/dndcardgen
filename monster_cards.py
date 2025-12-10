@@ -45,6 +45,7 @@ import sys
 import textwrap
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
+from difflib import SequenceMatcher
 
 from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageEnhance, ImageChops
 from reportlab.pdfgen import canvas as pdf_canvas
@@ -125,6 +126,56 @@ def resolve_profile_image(name: str, declared_path: Optional[str], images_dir: s
             candidate = os.path.join(images_dir, f"{base}.{ext}")
             if os.path.isfile(candidate):
                 return candidate
+
+    # 4) Fuzzy match: scan images_dir and pick the closest filename to the normalized name
+    try:
+        files = [f for f in os.listdir(images_dir) if os.path.isfile(os.path.join(images_dir, f))]
+    except Exception:
+        files = []
+    if not files:
+        return None
+
+    def norm(s: str) -> str:
+        base = os.path.splitext(s)[0]
+        # normalize: lowercase, keep alnum and underscores only, collapse repeats
+        raw = "".join(ch.lower() if ch.isalnum() else "_" for ch in base)
+        # collapse multiple underscores
+        out = []
+        prev_us = False
+        for ch in raw:
+            if ch == "_":
+                if not prev_us:
+                    out.append(ch)
+                prev_us = True
+            else:
+                out.append(ch)
+                prev_us = False
+        return "".join(out).strip("_")
+
+    target = norm(name)
+    best_file: Optional[str] = None
+    best_score = 0.0
+    for f in files:
+        # prefer common extensions
+        ext = os.path.splitext(f)[1].lower().lstrip(".")
+        if ext not in common_exts:
+            continue
+        n = norm(f)
+        # similarity by SequenceMatcher ratio
+        score = SequenceMatcher(None, target, n).ratio()
+        # bonus if one contains the other fully
+        if target and n and (target in n or n in target):
+            score += 0.15
+        # slight bonus for exact start match
+        if n.startswith(target) or target.startswith(n):
+            score += 0.10
+        if score > best_score:
+            best_score = score
+            best_file = f
+
+    # Threshold to avoid spurious matches
+    if best_file and best_score >= 0.55:
+        return os.path.join(images_dir, best_file)
     return None
 
 
@@ -295,7 +346,7 @@ def resolve_theme_fonts(theme: Optional[str]) -> Optional["FontsConfig"]:
     return FontsConfig(default=default, name=name, lore=lore, stats=stats)
 
 
-def measure_wrapped_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont, max_width: int, line_spacing: int = 4) -> Tuple[int, int, List[str]]:
+def measure_wrapped_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont, max_width: int, line_spacing: int = 0) -> Tuple[int, int, List[str]]:
     """Wraps text into lines that fit max_width; returns (w, h, lines)."""
     def text_size(s: str) -> Tuple[int, int]:
         bbox = draw.textbbox((0, 0), s, font=font)
@@ -422,13 +473,14 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     draw = ImageDraw.Draw(base)
 
     # Padding/layout on landscape
-    pad = int(min(LW, LH) * 0.06)
+    # Reduce padding to give text more room
+    pad = int(min(LW, LH) * 0.04)
     x, y = pad, pad
     content_w = LW - 2 * pad
     content_h = LH - 2 * pad
 
-    # Columns: image left (about 40%), text right (60%)
-    img_col_w = int(content_w * 0.40)
+    # Restore image column to 32% to keep images larger
+    img_col_w = int(content_w * 0.32)
     text_col_x = x + img_col_w + int(pad * 0.5)
     text_col_w = LW - text_col_x - pad
 
@@ -457,27 +509,21 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     # Now the main rounded image
     draw_rounded_image(base, profile, img_box, radius=24)
 
-    # Title at top of text column (fixed-size header; no shrink-to-fit, ellipsize if needed)
-    def ellipsize(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont, max_width: int) -> str:
-        if draw.textbbox((0,0), text, font=font)[2] <= max_width:
-            return text
-        ell = "…"
-        lo, hi = 0, len(text)
-        best = 0
-        while lo <= hi:
-            mid = (lo + hi) // 2
-            s = text[:mid] + ell
-            if draw.textbbox((0,0), s, font=font)[2] <= max_width:
-                best = mid
-                lo = mid + 1
-            else:
-                hi = mid - 1
-        return (text[:best] + ell) if best > 0 else ell
+    # Title at top of text column: shrink to fit without ellipses
+    def shrink_title_to_fit(text: str, font_path: Optional[str], start_size: int, max_width: int) -> ImageFont.FreeTypeFont:
+        size = start_size
+        while size > 6:
+            f = fit_font(font_path, size)
+            w = draw.textbbox((0, 0), text, font=f)[2]
+            if w <= max_width:
+                return f
+            size -= 1
+        return fit_font(font_path, max(6, size))
 
-    title_size = max(22, int(LH * 0.10))
-    title_font = fit_font(name_font_path, int(title_size * FONT_SCALE))
+    # Further reduce title size to favor body
+    title_size = max(18, int(LH * 0.07))
+    title_font = shrink_title_to_fit(mon.name or "Unknown", name_font_path, int(title_size * FONT_SCALE), text_col_w)
     title_text = mon.name or "Unknown"
-    title_text = ellipsize(draw, title_text, title_font, text_col_w)
     th = draw.textbbox((0, 0), title_text, font=title_font)[3] - draw.textbbox((0, 0), title_text, font=title_font)[1]
     ty = y
     # Fake bold for title
@@ -515,11 +561,13 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Section header style (text column width) — headers larger than body
     # Fixed-size section headers (no shrink)
-    header_font_size = int(max(18, int(LH * 0.06)) * FONT_SCALE)
+    # Further reduce header font size
+    header_font_size = int(max(15, int(LH * 0.045)) * FONT_SCALE)
     header_font = fit_font(stats_font_path, header_font_size)
     # Make the brown header bars thinner
-    header_bar_h = max(8, int(LH * 0.015))
-    header_gap = int(pad * 0.15)
+    # Make even thinner bars and tighter gaps
+    header_bar_h = max(5, int(LH * 0.010))
+    header_gap = int(pad * 0.08)
     # Estimate header text height for allocation using a representative string
     _hb = draw.textbbox((0, 0), "Ag", font=header_font)
     header_text_h_est = _hb[3] - _hb[1]
@@ -541,10 +589,11 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     remaining_h = content_h - (ty - y)
     # Section proportions must add to 100%
     # Tuned for balanced layout: Lore 22%, Stats 20%, Abilities 20%, Actions 28%, Culinary 10% = 100%
-    lore_pct = 0.22
-    stats_pct = 0.20
-    abilities_pct = 0.20
-    actions_pct = 0.28
+    # Approach C: aggressively allocate to Lore/Actions (text-heavy)
+    lore_pct = 0.28
+    stats_pct = 0.14
+    abilities_pct = 0.22
+    actions_pct = 0.26
     culinary_pct = 0.10
     # Renormalize if culinary is absent (assign its share to Actions)
     if not mon.culinary_use:
@@ -555,7 +604,8 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
         actions_pct /= total
         culinary_pct = 0.0
     # Small inner margin between blocks to avoid visual crowding
-    inner_margin = max(6, int(LH * 0.012))
+    # Tighter inner margins between blocks
+    inner_margin = max(4, int(LH * 0.008))
     # Compute heights, ensuring total fills remaining space minus margins and header bars
     sections_present = 4 + (1 if mon.culinary_use else 0)
     total_block_margins = inner_margin * 4  # gaps between blocks (Lore|Stats|Abilities|Actions|Culinary)
@@ -568,7 +618,8 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     # Assign remainder to culinary to ensure full fill
     assigned = lore_h + stats_h + abilities_h + actions_h
     culinary_h = max(0, usable_h - assigned)
-    line_gap = 2
+    # Reduce line gap to pack lines tighter, enabling larger font
+    line_gap = 0
 
     # Lore block (italic) - maximize font while fitting
     ty = section_header("Lore", ty)
@@ -579,9 +630,9 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
         lore_font_path,
         max_width=text_col_w,
         max_height=lore_h,
-        min_size=10,
+        min_size=16,
         # Allow very large attempts; binary search will settle to the largest that fits
-        max_size=int(max(12, lore_h))
+        max_size=int(max(24, lore_h))
     )
     italic_fill = (50, 40, 30, 255)
     lore_line_h = draw.textbbox((0, 0), "Ag", font=lore_font)[3] - draw.textbbox((0, 0), "Ag", font=lore_font)[1]
@@ -601,7 +652,7 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     ty = section_header("Stats", ty)
     # Binary search for largest font where rows_fit * 2 >= number of items
     items = list((mon.statblock or {}).items())
-    kv_pad = 6
+    kv_pad = 2
     def rows_for(sz: int) -> int:
         f = fit_font(stats_font_path, sz)
         sh = draw.textbbox((0, 0), "Ag", font=f)[3] - draw.textbbox((0, 0), "Ag", font=f)[1]
@@ -648,7 +699,7 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
             _, _, lines = measure_wrapped_text(draw, (ab.get("text", "").strip()), font, text_col_w - name_w)
             total += len(lines) * (lh + line_gap) + 2
         return total
-    lo, hi = 10, int(max(12, abilities_h))
+    lo, hi = 16, int(max(24, abilities_h))
     best_sz = lo
     while lo <= hi:
         mid = (lo + hi) // 2
@@ -701,7 +752,7 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
             total += len(lines) * (lh + line_gap) + 2
         return total
 
-    lo, hi = 10, int(max(12, actions_h))
+    lo, hi = 16, int(max(24, actions_h))
     best_sz = lo
     while lo <= hi:
         mid = (lo + hi) // 2
@@ -747,8 +798,8 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
             lore_font_path,
             max_width=text_col_w,
             max_height=culinary_h,
-            min_size=10,
-            max_size=int(max(12, culinary_h))
+            min_size=16,
+            max_size=int(max(24, culinary_h))
         )
         cul_line_h = draw.textbbox((0, 0), "Ag", font=cul_font)[3] - draw.textbbox((0, 0), "Ag", font=cul_font)[1]
         used_h = 0

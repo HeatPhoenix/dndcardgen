@@ -2,7 +2,7 @@
   {
     "id": "walking_mushroom",
     "name": "Walking Mushroom",
-    "profile_image": null,
+    "profile_image": "images/Walking_Mushroom.webp",
     "size": "Medium",
     "type": "Plant",
     "lore": "Walking Mushrooms are the dungeon's natural air purifiers and decomposers. They're not aggressive, but their spores are irritating and mildly toxic. The dungeon ecosystem depends on their presence. Due to the nature of the fibres in their bodies, horizontal and diagonal slashes are less effective on them.",
@@ -38,7 +38,7 @@
   {
     "id": "slime",
     "name": "Slime",
-    "profile_image": null,
+    "profile_image": "images/Slime.webp",
     "size": "Small",
     "type": "Ooze",
     "lore": "Slimes in the Melini Crypt are fist- to head-sized blobs of translucent jelly that cling to ceilings, urns, and damp corners. They are mostly passive parasites that hunt by smell, dropping onto warm, breathing creatures that wander beneath them. On an unlucky day, they fall straight onto an adventurer's head, suffocating and dissolving them from the outside in. Their outer layer is a caustic digestive fluid, while their tiny organs float inside like pale, jellyfish-like knots. They dislike fire and are fragile when struck in the core or blasted with magic.",
@@ -100,7 +100,7 @@
   {
     "id": "mandrake",
     "name": "Mandrake",
-    "profile_image": null,
+    "profile_image": "images/Mandrake.webp",
     "size": "Small",
     "type": "Plant",
     "lore": "Mandrakes are intelligent plant creatures with deep roots in dungeon soil. They're territorial but not inherently evil. Many are content to remain rooted and allow travelers to pass if undisturbed. However, they scream when threatened—a sound that echoes through the dungeon and attracts other creatures.",
@@ -146,7 +146,7 @@
   {
     "id": "living_armor",
     "name": "Living Armor",
-    "profile_image": null,
+    "profile_image": "images/Living_Armor.webp",
     "size": "Medium",
     "type": "Construct",
     "lore": "Living Armor resemble hollow suits of armor that move by themselves, and until recently were thought to be actual suits of armor animated by an unknown sorcerer. However, they are in actuality a kind of mollusk that mimics armor. They consist of colonies of individuals that gather together when older, linking up their bodies, and then move by contracting themselves like muscles. Like land snails, they drown if placed in water.",
@@ -197,7 +197,7 @@
   {
     "id": "harpy",
     "name": "Harpy",
-    "profile_image": null,
+    "profile_image": "images/Harpy.webp",
     "size": "Medium",
     "type": "Monstrosity",
     "lore": "Harpies build crude nests in the high branches and crevices of the Spire Forest, weaving bones, rope scraps, and stolen cloth into platforms that hang above the dungeon floor. They lay clutches of large, pale eggs, brooding them against a warm patch of bare skin on their torsos that resembles human breasts, and defend their nesting sites with startling ferocity. Most of the time, however, they act as opportunistic scavengers—following groups of adventurers or larger monsters and swooping in to steal food, gear, and anything shiny once the real fighting is over.",
@@ -256,7 +256,7 @@
   {
     "id": "kelpie_equine",
     "name": "Kelpie",
-    "profile_image": null,
+    "profile_image": "images/kelpie.webp",
     "size": "Large",
     "type": "Monstrosity",
     "lore": "Kelpies are territorial water predators that use cunning and deception to lure prey. They are intelligent enough to assess threats and will attempt to drag creatures into water where they have advantage. Their fat is valuable for hair oils and soaps of exceptional quality.",
@@ -314,7 +314,7 @@
   {
     "id": "mermaid",
     "name": "Mermaid",
-    "profile_image": null,
+    "profile_image": "images/mermaid.png",
     "size": "Medium",
     "type": "Humanoid",
     "lore": "Mermaids build hidden alcoves in underwater caverns and lakes. They sing to lure surface dwellers and adventurers, drawing them into water where they can drag victims beneath the waves with brutal surprise. Though their attacks are light, the danger lies in their mesmerizing song and the deceptive beauty that belies their deadly nature.",
@@ -371,7 +371,7 @@
   {
     "id": "dryad",
     "name": "Dryad",
-    "profile_image": null,
+    "profile_image": "images/Dryad.webp",
     "size": "Medium",
     "type": "Plant",
     "lore": "A plant monster that resembles the body of a beautiful young humanoid, deeply attuned to the forest and dungeon flora around it.",
@@ -422,7 +422,7 @@
   {
     "id": "cockatrice",
     "name": "Cockatrice",
-    "profile_image": null,
+    "profile_image": "images/Cockatrice.webp",
     "size": "Medium",
     "type": "Monstrosity",
     "lore": "These monsters resemble basilisks, but they're several times more dangerous. The snake head has pit organs and can detect its prey's location by sensing temperature. Once its poison is in your system, you'll turn to stone.",
@@ -483,7 +483,7 @@
   {
     "id": "minotaur",
     "name": "Minotaur",
-    "profile_image": null,
+    "profile_image": "images/minotaur.png",
     "size": "Large",
     "type": "Monstrosity",
     "lore": "Large, powerful bipedal bovines used as cattle on the surface. They walk upright on two legs and give birth to live calves. Though not truly intelligent, they are comfortable gripping tools or crude weapons in their hands.",
@@ -537,7 +537,7 @@
   {
     "id": "thistle_lunatic_magician",
     "name": "Thistle",
-    "profile_image": null,
+    "profile_image": "images/thistle.webp",
     "size": "Medium",
     "type": "Humanoid",
     "lore": "Thistle is a powerful and unstable archmage who serves as the dungeon's final master. His magic reshapes the battlefield and toys with the minds of intruders, turning the entire lair into a shifting deathtrap.",
@@ -598,7 +598,7 @@
   {
     "id": "red_dragon_midpoint_boss",
     "name": "Red Dragon",
-    "profile_image": null,
+    "profile_image": "images/reddragon.webp",
     "size": "Huge",
     "type": "Dragon",
     "lore": "The red dragon is a towering engine of fire and malice, in this dungeon ecosystem it is the apex predator.",

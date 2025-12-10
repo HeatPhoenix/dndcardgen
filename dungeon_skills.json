@@ -5,7 +5,7 @@
     "assigned_to": "One player",
     "usage_label": "Once per floor",
     "lore": "Your mastery of dungeon cookery turns viscera into sustenance.",
-    "body": "Once per floor, you may spend up to one floor cooking a dish using 1–3 monster parts harvested in that floor or earlier. Choose one of the following ability checks: Cooking (Constitution check): standard difficulty; success grants the party a temporary buff. Culinary Intuition (Intelligence or Wisdom check): creative preparation that grants advantage on the buff roll or an enhanced effect. Risky Delicacy (Charisma check, DC 16): an experimental or dangerous recipe; success grants the buff and +1d6 temporary hit points, while failure causes nausea (disadvantage on one roll). Buff options (1 floor duration): +1d4 to attack rolls; +1d6 to AC (maximum 18); healing that restores 1d8 + party size hit points; or resistance to a damage type of the party's choice. The buff does not take effect until it is consumed. If the cook rolls a 1, the dish is spoiled and each party member must succeed on a DC 12 Constitution saving throw or suffer poisoning, imposing disadvantage on checks for one floor.",
+    "body": "Cook 1–3 harvested monster parts to grant one 1-floor buff: +1d4 attack; +1d6 AC (max 18); heal 1d8 + party size; or chosen damage resistance. Choose a check: Cooking (Con) normal; Culinary Intuition (Int/Wis) grants advantage or an enhanced effect; Risky Delicacy (Cha DC 16) adds +1d6 temp HP on success, or causes nausea (disadvantage on one roll) on failure. On a natural 1 the dish spoils: each party member makes a DC 12 Con save or is poisoned for one floor.",
     "fonts": {}
   },
   {
@@ -41,7 +41,7 @@
     "assigned_to": "Fighter (long sword user)",
     "usage_label": "Once per long rest",
     "lore": "Your training in the Eastern Archipelago has focused your mind, and now your mind focuses your blade.",
-    "body": "Once per long rest, when you encounter a non-boss enemy designated by the DM, you can declare an Iaijutsu Strike before making an attack roll. Make a Dexterity check against DC 12 + the creature's proficiency bonus (minimum DC 12). On a success, your weapon strikes a vital point and the target is instantly reduced to 0 hit points with no saving throw—it dies outright. On a failure, you still hit and deal double damage on that attack, but the enemy survives.",
+    "body": "Before attacking a designated non-boss, make a Dex check vs DC 12 + target proficiency (min 12). On success, the target drops to 0 HP (dies outright). On failure, you still hit and deal double damage.",
     "fonts": {}
   },
   {

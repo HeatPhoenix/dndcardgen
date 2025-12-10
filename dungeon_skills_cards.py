@@ -196,6 +196,9 @@ class DungeonSkill:
 
 
 def measure_wrapped_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.FreeTypeFont, max_width: int, line_spacing: int = 4):
+    """Wrap text to max_width and measure width/height using the same
+    measurement method as drawing. Returns (width, height, lines, per_line_heights).
+    """
     def text_size(s: str):
         bbox = draw.textbbox((0, 0), s, font=font)
         return bbox[2] - bbox[0], bbox[3] - bbox[1]
@@ -214,26 +217,44 @@ def measure_wrapped_text(draw: ImageDraw.ImageDraw, text: str, font: ImageFont.F
             current = [word]
     if current:
         lines.append(" ".join(current))
-    line_heights = [text_size(line)[1] for line in lines] or [text_size(" ")[1]]
-    height = sum(line_heights) + line_spacing * (len(lines) - 1 if lines else 0)
-    width = min(max(text_size(line)[0] for line in lines) if lines else 0, max_width)
-    return width, height, lines
+
+    # Measure per-line heights using textbbox so draw loop matches measurement
+    per_line_heights = [text_size(line)[1] for line in lines] if lines else [text_size(" ")[1]]
+    height = sum(per_line_heights) + line_spacing * (len(lines) - 1 if lines else 0)
+    width = min(max((text_size(line)[0] for line in lines), default=0), max_width)
+    return width, height, lines, per_line_heights
 
 
-def best_fit_wrapped(draw: ImageDraw.ImageDraw, text: str, font_path: Optional[str], max_width: int, max_height: int, min_size: int, max_size: int):
+def best_fit_wrapped(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font_path: Optional[str],
+    max_width: int,
+    max_height: int,
+    min_size: int,
+    max_size: int,
+    line_spacing: int = 4,
+):
+    """Binary-search the largest font size so that the wrapped text height
+    is <= max_height. Returns (font, lines, total_height, per_line_heights).
+    """
     lo, hi = min_size, max_size
     best_font = fit_font(font_path, min_size)
-    _, _, best_lines = measure_wrapped_text(draw, text, best_font, max_width)
+    _, best_h, best_lines, best_line_heights = measure_wrapped_text(
+        draw, text, best_font, max_width, line_spacing=line_spacing
+    )
     while lo <= hi:
         mid = (lo + hi) // 2
         font = fit_font(font_path, mid)
-        _, h, lines = measure_wrapped_text(draw, text, font, max_width)
+        _, h, lines, line_heights = measure_wrapped_text(
+            draw, text, font, max_width, line_spacing=line_spacing
+        )
         if h <= max_height:
-            best_font, best_lines = font, lines
+            best_font, best_lines, best_h, best_line_heights = font, lines, h, line_heights
             lo = mid + 1
         else:
             hi = mid - 1
-    return best_font, best_lines
+    return best_font, best_lines, best_h, best_line_heights
 
 
 def render_skill_card(skill: DungeonSkill, cfg: CardConfig) -> Image.Image:
@@ -321,12 +342,19 @@ def render_skill_card(skill: DungeonSkill, cfg: CardConfig) -> Image.Image:
     header_gap = int(pad * 0.2)
     inner_margin = int(LH * 0.015)
 
-    # Lore block height ~22% of content, usage ~12%, body uses the rest
-    lore_h = int(content_h * 0.22)
-    usage_h = int(content_h * 0.12)
-    body_h = max(0, content_h - lore_h - usage_h - 3 * inner_margin)
+    # Determine the vertical budget remaining after title, and reserve a small bottom guard
+    bottom_guard = int(LH * 0.02)
+    bottom_y = y + content_h - bottom_guard
+    remaining_after_title = max(0, bottom_y - ty)
 
-    lore_font, lore_lines = best_fit_wrapped(
+    # Proportions for lore and usage out of the remaining space; body gets the rest
+    lore_h = int(remaining_after_title * 0.18)
+    usage_h = int(remaining_after_title * 0.10)
+
+    # Use consistent line spacing in measure and draw
+    lore_line_gap = 2
+    lore_start = ty
+    lore_font, lore_lines, lore_measured_h, lore_line_heights = best_fit_wrapped(
         draw,
         skill.lore or "",
         lore_font_path,
@@ -334,18 +362,28 @@ def render_skill_card(skill: DungeonSkill, cfg: CardConfig) -> Image.Image:
         max_height=lore_h,
         min_size=12,
         max_size=int(max(18, lore_h)),
+        line_spacing=lore_line_gap,
     )
     lore_color = (50, 40, 30, 255)
-    lore_line_h = draw.textbbox((0, 0), "Ag", font=lore_font)[3] - draw.textbbox((0, 0), "Ag", font=lore_font)[1]
+    # Draw using measured per-line heights to avoid mismatch with measurement
     used = 0
-    for line in lore_lines:
-        if used + lore_line_h > lore_h:
+    for i, line in enumerate(lore_lines):
+        line_h = lore_line_heights[i] if i < len(lore_line_heights) else lore_line_heights[-1]
+        # Stop if next line would exceed the allocated block height (guard for rounding)
+        if used + line_h > lore_h + 1:
             break
         draw.text((x, ty), line, font=lore_font, fill=lore_color)
-        ty += lore_line_h + 2
-        used += lore_line_h + 2
+        ty += line_h
+        used += line_h
+        # Add spacing between lines (but not after the last one we'll draw)
+        if i < len(lore_lines) - 1:
+            if used + lore_line_gap > lore_h + 1:
+                break
+            ty += lore_line_gap
+            used += lore_line_gap
 
-    ty = y + th + header_gap + lore_h
+    # Advance to the end of the allocated Lore block to avoid overlap
+    ty = lore_start + lore_h
     ty += inner_margin
 
     # Usage label (bold-ish), with explicit "Usage:" prefix
@@ -353,14 +391,22 @@ def render_skill_card(skill: DungeonSkill, cfg: CardConfig) -> Image.Image:
     usage_font = fit_font(body_font_path, usage_font_size)
     raw_usage = skill.usage_label or ""
     usage_text = f"Usage: {raw_usage}" if raw_usage else "Usage:"
+    usage_text = ellipsize(draw, usage_text, usage_font, content_w)
+    usage_start = ty
     ub = draw.textbbox((0, 0), usage_text, font=usage_font)
     uh = ub[3] - ub[1]
     draw.text((x, ty), usage_text, font=usage_font, fill=(20, 10, 5, 255))
     draw.text((x + 1, ty), usage_text, font=usage_font, fill=(20, 10, 5, 255))
-    ty += uh + inner_margin
+    ty += uh
+    # Ensure we occupy at least the reserved usage block height
+    ty = max(ty, usage_start + usage_h)
+    ty += inner_margin
 
     # Body text block – dynamic scaling via best_fit_wrapped to fully use space
-    body_font, body_lines = best_fit_wrapped(
+    body_line_gap = 3
+    # Compute body block height from current ty down to bottom_y, keeping bottom guard
+    body_h = max(0, bottom_y - ty)
+    body_font, body_lines, body_measured_h, body_line_heights = best_fit_wrapped(
         draw,
         skill.body or "",
         body_font_path,
@@ -368,16 +414,22 @@ def render_skill_card(skill: DungeonSkill, cfg: CardConfig) -> Image.Image:
         max_height=body_h,
         min_size=11,
         max_size=int(max(26, body_h)),
+        line_spacing=body_line_gap,
     )
     body_color = (35, 25, 15, 255)
-    body_line_h = draw.textbbox((0, 0), "Ag", font=body_font)[3] - draw.textbbox((0, 0), "Ag", font=body_font)[1]
     used = 0
-    for line in body_lines:
-        if used + body_line_h > body_h:
+    for i, line in enumerate(body_lines):
+        line_h = body_line_heights[i] if i < len(body_line_heights) else body_line_heights[-1]
+        if used + line_h > body_h + 1:
             break
         draw.text((x, ty), line, font=body_font, fill=body_color)
-        ty += body_line_h + 3
-        used += body_line_h + 3
+        ty += line_h
+        used += line_h
+        if i < len(body_lines) - 1:
+            if used + body_line_gap > body_h + 1:
+                break
+            ty += body_line_gap
+            used += body_line_gap
 
     final_img = base.convert("RGB").rotate(-90, expand=True)
     final_img = ImageOps.contain(final_img, (W, H), method=Image.Resampling.LANCZOS)
