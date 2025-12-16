@@ -166,5 +166,21 @@
     "effect": "A sword taken from a defeated Living Armor. It seems to be infested by a helpful colony of Living Armor that now considers it your kin. Wielding it provides +3 on initiative rolls, and the player cannot be ambushed or surprised.",
     "lore": "The sword's inhabitant, aptly named Kensuke, seems to be able to sense monsters. A soft rattling sound only the wielder can hear is heard when enemies are nearby.",
   "image": "treasure_img/kensuke.png"
+  },
+  {
+    "id": "22",
+    "title": "TREASURE CHEST REWARD CARD",
+  "name": "SCROLL OF WATER WALK",
+    "effect": "A scroll that teaches your mage or cleric the spell Water Walk. This spell allows (as ritual) up to 5 willing creatures to walk on water for 1 floor. Spell is cancelled if caster dies.",
+    "lore": "Rumor has it that this spell was once used on an aquatic monster to force it to surface. It's normally used to cross water safely, though.",
+  "image": "treasure_img/scrollofwaterwalk.png"
+  },
+  {
+    "id": "23",
+    "title": "TREASURE CHEST REWARD CARD",
+    "name": "TELEPORTATION TOME",
+    "effect": "A tome containing the secrets of advanced teleportation magic. Once per floor, the reader can teleport an adjacent enemy (within 5 feet) to any visible location.",
+    "lore": "The most powerful captain of the Canaries uses magic much like this offensively, teleporting foes into walls and objects. Even teleporting objects through enemies to slice them apart.",
+    "image": "treasure_img/teleportationtome.png"
   }
 ]
