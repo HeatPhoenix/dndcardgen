@@ -24,6 +24,8 @@ CLI flags:
     --theme             Apply a curated font theme (e.g., 'fantasy') by looking for TTFs in ./fonts
     --margin            Page margin (pixels) for PDF (default: 60 at 300dpi)
     --gutter            Gutter between cards for PDF (default: 30 at 300dpi)
+    --show-lore         Include the Lore section on cards (default: off)
+    --show-culinary     Include the Culinary Use section on cards (default: off)
     --demo              Generate sample cards from bundled example_monsters.json
 
 Input JSON schema:
@@ -425,6 +427,8 @@ class CardConfig:
     height: int
     dpi: int
     fonts: FontsConfig
+    show_lore: bool = False
+    show_culinary: bool = False
 
 
 @dataclass
@@ -473,16 +477,22 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     draw = ImageDraw.Draw(base)
 
     # Padding/layout on landscape
-    # Reduce padding to give text more room
-    pad = int(min(LW, LH) * 0.04)
+    # Slightly smaller outer margin so content scales up more
+    pad = int(min(LW, LH) * 0.03)
     x, y = pad, pad
     content_w = LW - 2 * pad
     content_h = LH - 2 * pad
 
-    # Restore image column to 32% to keep images larger
-    img_col_w = int(content_w * 0.32)
-    text_col_x = x + img_col_w + int(pad * 0.5)
-    text_col_w = LW - text_col_x - pad
+    # Image column: slightly narrower (~28% of width) and occupying
+    # roughly the top third vertically so the bottom-left quadrant
+    # has clearly more room for text (1 sector image, 3 sectors text).
+    img_col_w = int(content_w * 0.28)
+    img_h = int(content_h * 0.35)
+    right_col_x = x + img_col_w + int(pad * 0.5)
+    right_col_w = LW - right_col_x - pad
+    # Top text (title / creature line) lives in the right column.
+    text_col_x = right_col_x
+    text_col_w = right_col_w
 
     # Fonts
     fc = cfg.fonts
@@ -491,20 +501,24 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     stats_font_path = mon.fonts_overrides.get("stats") or fc.stats or fc.default
 
     # Profile image fills left column, rounded, with drop shadow to the right
-    img_box = (x, y, x + img_col_w, y + content_h)
-    # Solid panel under image to avoid perceived emptiness around rounded corners
-    ImageDraw.Draw(base).rectangle(img_box, fill=(230, 220, 200, 255))
-    profile = safe_load_image(mon.profile_image, (img_col_w, content_h))
+    img_box = (x, y, x + img_col_w, y + img_h)
+    profile = safe_load_image(mon.profile_image, (img_col_w, img_h))
+    # Effective bottom of the visible image inside its box, accounting
+    # for letterboxing when aspect ratios don't match exactly. We use
+    # this to decide when text can safely expand under the image.
+    _iw, _ih = profile.size
+    _oy = (img_h - _ih) // 2
+    img_bottom = y + _oy + _ih
     # Create a darkened shadow copy and paste it slightly to the right, behind the image
     try:
         shadow = profile.copy().convert("RGBA")
         shadow = ImageEnhance.Brightness(shadow).enhance(0.35)
     except Exception:
         shadow = None
-    # Move the drop shadow further to the right per request
-    shadow_offset = max(12, int(LW * 0.03))
+    # Subtle drop shadow slightly offset to the right
+    shadow_offset = max(6, int(LW * 0.015))
     if shadow is not None:
-        shadow_box = (x + shadow_offset, y, x + shadow_offset + img_col_w, y + content_h)
+        shadow_box = (x + shadow_offset, y, x + shadow_offset + img_col_w, y + img_h)
         draw_rounded_image(base, shadow, shadow_box, radius=24)
     # Now the main rounded image
     draw_rounded_image(base, profile, img_box, radius=24)
@@ -520,8 +534,8 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
             size -= 1
         return fit_font(font_path, max(6, size))
 
-    # Further reduce title size to favor body
-    title_size = max(18, int(LH * 0.07))
+    # Slightly reduce title size to favor body text even more
+    title_size = max(16, int(LH * 0.055))
     title_font = shrink_title_to_fit(mon.name or "Unknown", name_font_path, int(title_size * FONT_SCALE), text_col_w)
     title_text = mon.name or "Unknown"
     th = draw.textbbox((0, 0), title_text, font=title_font)[3] - draw.textbbox((0, 0), title_text, font=title_font)[1]
@@ -561,8 +575,8 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     # Section header style (text column width) — headers larger than body
     # Fixed-size section headers (no shrink)
-    # Further reduce header font size
-    header_font_size = int(max(15, int(LH * 0.045)) * FONT_SCALE)
+    # Make headers a bit smaller to de-emphasize them
+    header_font_size = int(max(12, int(LH * 0.035)) * FONT_SCALE)
     header_font = fit_font(stats_font_path, header_font_size)
     # Make the brown header bars thinner
     # Make even thinner bars and tighter gaps
@@ -572,6 +586,12 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     _hb = draw.textbbox((0, 0), "Ag", font=header_font)
     header_text_h_est = _hb[3] - _hb[1]
     header_cost_est = header_bar_h + header_gap + header_text_h_est
+
+    # Small inner margin between the creature line and the first
+    # section header; sections begin immediately under the title/
+    # creature type block so the top-right area isn’t left empty.
+    inner_margin = max(4, int(LH * 0.008))
+    ty += inner_margin
 
     def section_header(text: str, yy: int) -> int:
         # Actual header text height
@@ -584,120 +604,288 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
         draw.text((text_col_x + 7, text_y), text, font=header_font, fill=(40, 30, 20, 255))
         return yy + header_bar_h + header_gap + header_text_h
 
-    # Fixed block heights for sections to avoid overlap and keep consistency
-    # Allocate proportions of text column height remaining after title
+    # Fixed block heights for sections to avoid overlap and keep consistency.
+    # Allocate proportions of the remaining text column height; Lore and
+    # Culinary are optional and can be globally toggled via CardConfig.
     remaining_h = content_h - (ty - y)
-    # Section proportions must add to 100%
-    # Tuned for balanced layout: Lore 22%, Stats 20%, Abilities 20%, Actions 28%, Culinary 10% = 100%
-    # Approach C: aggressively allocate to Lore/Actions (text-heavy)
-    lore_pct = 0.28
-    stats_pct = 0.14
-    abilities_pct = 0.22
-    actions_pct = 0.26
-    culinary_pct = 0.10
-    # Renormalize if culinary is absent (assign its share to Actions)
-    if not mon.culinary_use:
-        total = lore_pct + stats_pct + abilities_pct + actions_pct
-        lore_pct /= total
-        stats_pct /= total
-        abilities_pct /= total
-        actions_pct /= total
-        culinary_pct = 0.0
-    # Small inner margin between blocks to avoid visual crowding
-    # Tighter inner margins between blocks
-    inner_margin = max(4, int(LH * 0.008))
-    # Compute heights, ensuring total fills remaining space minus margins and header bars
-    sections_present = 4 + (1 if mon.culinary_use else 0)
-    total_block_margins = inner_margin * 4  # gaps between blocks (Lore|Stats|Abilities|Actions|Culinary)
+
+    base_lore_pct = 0.28
+    base_stats_pct = 0.14
+    base_abilities_pct = 0.22
+    base_actions_pct = 0.26
+    base_culinary_pct = 0.10
+
+    sections: List[Tuple[str, float]] = []
+    if cfg.show_lore and mon.lore:
+        sections.append(("lore", base_lore_pct))
+    sections.append(("stats", base_stats_pct))
+    # Only include Abilities section if there are any abilities to show.
+    # If there is very little content (e.g., a single short ability like
+    # "Stewed Armor" on Living Armor), shrink its base share a bit so that
+    # we can give more vertical real estate to denser sections like Stats.
+    if mon.abilities:
+        abil_pct = base_abilities_pct
+        if len(mon.abilities) <= 1:
+            abil_pct *= 0.6
+        sections.append(("abilities", abil_pct))
+    sections.append(("actions", base_actions_pct))
+    if cfg.show_culinary and mon.culinary_use:
+        sections.append(("culinary", base_culinary_pct))
+
+    if not sections:
+        sections = [("stats", 1.0)]
+
+    total_pct = sum(p for _, p in sections) or 1.0
+    sections = [(name, p / total_pct) for name, p in sections]
+
+    sections_present = len(sections)
+    total_block_margins = inner_margin * max(0, sections_present - 1)
     total_header_cost = sections_present * header_cost_est
     usable_h = max(0, remaining_h - total_block_margins - total_header_cost)
-    lore_h = int(usable_h * lore_pct)
-    stats_h = int(usable_h * stats_pct)
-    abilities_h = int(usable_h * abilities_pct)
-    actions_h = int(usable_h * actions_pct)
-    # Assign remainder to culinary to ensure full fill
-    assigned = lore_h + stats_h + abilities_h + actions_h
-    culinary_h = max(0, usable_h - assigned)
-    # Reduce line gap to pack lines tighter, enabling larger font
-    line_gap = 0
+
+    heights: Dict[str, int] = {}
+    assigned = 0
+    for idx, (name, pct) in enumerate(sections):
+        if idx == len(sections) - 1:
+            h = max(0, usable_h - assigned)
+        else:
+            h = int(usable_h * pct)
+            assigned += h
+        if h > 0:
+            heights[name] = h
+
+    # Ensure the Stats block always has a solid chunk of vertical space so
+    # that its multi-column text can be rendered at a comfortably large size.
+    # If the initially allocated height is below 25% of the usable text area,
+    # steal a bit of height from other sections to bring it up.
+    if "stats" in heights and usable_h > 0 and (mon.statblock or {}):
+        current_stats_h = heights["stats"]
+        min_stats_h = int(usable_h * 0.3)
+        if current_stats_h < min_stats_h:
+            extra = min_stats_h - current_stats_h
+            adjustable_names = [n for n in heights.keys() if n != "stats"]
+            total_adjustable = sum(heights[n] for n in adjustable_names)
+            if total_adjustable > 0 and extra > 0:
+                for n in adjustable_names:
+                    share = heights[n] / total_adjustable if total_adjustable else 0.0
+                    reduce_by = int(round(extra * share))
+                    if reduce_by <= 0:
+                        continue
+                    heights[n] = max(0, heights[n] - reduce_by)
+                heights["stats"] = min_stats_h
+
+    lore_h = heights.get("lore", 0)
+    stats_h = heights.get("stats", 0)
+    abilities_h = heights.get("abilities", 0)
+    actions_h = heights.get("actions", 0)
+    culinary_h = heights.get("culinary", 0)
+    # Small line gap to prevent visual clipping while still packing text
+    line_gap = 1
+
+    def line_height_for(font: ImageFont.FreeTypeFont) -> int:
+        """Robust line height based on font metrics, with fallback.
+
+        Using ascent+descent is more stable across different glyphs than
+        measuring a single sample string, which can cause lines to overlap
+        slightly for larger font sizes.
+        """
+        try:
+            ascent, descent = font.getmetrics()
+            return int(ascent + descent + 1)
+        except Exception:
+            bbox = draw.textbbox((0, 0), "Agypfj", font=font)
+            return int((bbox[3] - bbox[1]) + 1)
+
+    previous_section_drawn = False
 
     # Lore block (italic) - maximize font while fitting
-    ty = section_header("Lore", ty)
-    lore_start = ty
-    lore_font, lore_lines = best_fit_wrapped(
-        draw,
-        mon.lore or "",
-        lore_font_path,
-        max_width=text_col_w,
-        max_height=lore_h,
-        min_size=16,
-        # Allow very large attempts; binary search will settle to the largest that fits
-        max_size=int(max(24, lore_h))
-    )
-    italic_fill = (50, 40, 30, 255)
-    lore_line_h = draw.textbbox((0, 0), "Ag", font=lore_font)[3] - draw.textbbox((0, 0), "Ag", font=lore_font)[1]
-    drawn_h = 0
-    for line in lore_lines:
-        if drawn_h + lore_line_h > lore_h:
-            break
-        draw.text((text_col_x, ty), line, font=lore_font, fill=italic_fill)
-        ty += lore_line_h + line_gap
-        drawn_h += lore_line_h + line_gap
-    # Advance to end of allocated block to ensure full column fill
-    ty = lore_start + lore_h
+    if "lore" in heights and lore_h > 0:
+        if previous_section_drawn:
+            ty += inner_margin
+        ty = section_header("Lore", ty)
+        lore_start = ty
+        lore_font, lore_lines = best_fit_wrapped(
+            draw,
+            mon.lore or "",
+            lore_font_path,
+            max_width=text_col_w,
+            max_height=lore_h,
+            min_size=16,
+            # Allow very large attempts; binary search will settle to the largest that fits
+            max_size=int(max(24, lore_h))
+        )
+        italic_fill = (50, 40, 30, 255)
+        lore_line_h = line_height_for(lore_font)
+        drawn_h = 0
+        for line in lore_lines:
+            if drawn_h + lore_line_h > lore_h:
+                break
+            draw.text((text_col_x, ty), line, font=lore_font, fill=italic_fill)
+            ty += lore_line_h + line_gap
+            drawn_h += lore_line_h + line_gap
+        # Advance to end of allocated block to ensure full column fill
+        ty = lore_start + lore_h
+        previous_section_drawn = True
 
-    # Gap between blocks
-    ty += inner_margin
-    # Stats block (maximize font while ensuring items fit in two columns)
-    ty = section_header("Stats", ty)
-    # Binary search for largest font where rows_fit * 2 >= number of items
-    items = list((mon.statblock or {}).items())
-    kv_pad = 2
-    def rows_for(sz: int) -> int:
-        f = fit_font(stats_font_path, sz)
-        sh = draw.textbbox((0, 0), "Ag", font=f)[3] - draw.textbbox((0, 0), "Ag", font=f)[1]
-        return max(1, (stats_h // (sh + kv_pad)))
-    lo, hi = 10, int(max(12, stats_h))
-    best_sz = lo
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        if rows_for(mid) * 2 >= len(items):
-            best_sz = mid
-            lo = mid + 1
-        else:
-            hi = mid - 1
-    stats_font = fit_font(stats_font_path, best_sz)
-    col_w = text_col_w // 2
-    sx = text_col_x
-    sy = ty
-    sample_h = draw.textbbox((0, 0), "Ag", font=stats_font)[3] - draw.textbbox((0, 0), "Ag", font=stats_font)[1]
-    rows_fit = max(1, (stats_h // (sample_h + kv_pad)))
-    max_items = rows_fit * 2
-    items = items[:max_items]
-    for i, (k, v) in enumerate(items):
-        cx = sx if i % 2 == 0 else sx + col_w
-        cy = sy + (i // 2) * (sample_h + kv_pad)
-        if (i // 2) * (sample_h + kv_pad) + sample_h > stats_h:
-            break
-        draw.text((cx, cy), f"{k}: {v}", font=stats_font, fill=(35, 25, 15, 255))
-    # Advance to end of allocated block to ensure full column fill
-    ty = sy + stats_h
+    # Stats block (multi-column, up to four; maximize font while fitting)
+    if "stats" in heights and stats_h > 0:
+        if previous_section_drawn:
+            ty += inner_margin
+        # If we've scrolled below the *visible* bottom of the image,
+        # switch to full-width text; otherwise keep using the right
+        # column so we fill the top-right area immediately under the
+        # title/creature line.
+        if ty >= img_bottom and text_col_x != x:
+            text_col_x = x
+            text_col_w = content_w
+        ty = section_header("Stats", ty)
+    # Binary search for largest font where wrapped rows * 3 >= items
+        raw_stats = mon.statblock or {}
+        # Skip rendering lines that aren't tactically useful on the face
+        # of the card.
+        items = [
+            (k, v)
+            for k, v in raw_stats.items()
+            if k.strip().lower() not in {"challenge", "languages"}
+        ]
+        # Compact vertical padding between stats rows so dense
+        # statblocks don't look overly airy, especially at
+        # smaller font sizes.
+        kv_pad = 1
+        # Always use four columns when there are stats, to better
+        # fill horizontal space and allow slightly larger text.
+        num_cols = 1 if not items else 4
 
-    # Gap between blocks
-    ty += inner_margin
+        def rows_for(sz: int) -> int:
+            """Estimate total height needed for all stats at a given font size.
+
+            We flatten all wrapped lines into a single sequence and
+            distribute them evenly across the configured number of
+            columns, then compute how tall that grid would be.
+            """
+            if not items:
+                return 0
+            f = fit_font(stats_font_path, sz)
+            lh = line_height_for(f)
+            # Slightly narrow each stats column to reduce the visible gap
+            # between columns without drastically changing font size.
+            col_w = max(1, int((text_col_w // num_cols) * 0.9))
+            total_lines = 0
+            for k, v in items:
+                key = (k or "").strip()
+                key_lower = key.lower()
+                if key_lower == "condition immunities":
+                    label = "Immunities"
+                elif key_lower == "armor class":
+                    label = "AC"
+                elif key_lower == "hit points":
+                    label = "HP"
+                else:
+                    label = key
+                full = f"{label}: {v}"
+                _, _, lines = measure_wrapped_text(draw, full, f, col_w)
+                total_lines += len(lines)
+            if total_lines == 0:
+                return 0
+            rows_per_col = max(1, (total_lines + num_cols - 1) // num_cols)
+            return rows_per_col * (lh + kv_pad)
+
+        lo, hi = 10, int(max(12, stats_h))
+        best_sz = lo
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            needed_h = rows_for(mid)
+            if needed_h <= stats_h:
+                best_sz = mid
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        stats_font = fit_font(stats_font_path, best_sz)
+        col_w = max(1, int((text_col_w // num_cols) * 0.9))
+        sx = text_col_x
+        sy = ty
+        lh = line_height_for(stats_font)
+        name_color = (30, 20, 10, 255)
+        text_color = (35, 25, 15, 255)
+
+        # Flatten all wrapped stat lines so we can distribute them
+        # evenly across the four columns.
+        lines_with_labels: list[tuple[str, Optional[str]]] = []
+        for k, v in items:
+            key = (k or "").strip()
+            key_lower = key.lower()
+            if key_lower == "condition immunities":
+                label = "Immunities"
+            elif key_lower == "armor class":
+                label = "AC"
+            elif key_lower == "hit points":
+                label = "HP"
+            else:
+                label = key
+            full = f"{label}: {v}"
+            _, _, wrapped = measure_wrapped_text(draw, full, stats_font, col_w)
+            prefix = f"{label}: "
+            for idx, line in enumerate(wrapped):
+                # Store the full rendered line and, on the first
+                # line only, remember the label prefix so we can
+                # overdraw it in bold.
+                lines_with_labels.append((line, prefix if idx == 0 else None))
+
+        total_units = len(lines_with_labels)
+        if total_units > 0 and num_cols > 0:
+            rows_per_col = max(1, (total_units + num_cols - 1) // num_cols)
+            unit_index = 0
+            for col in range(num_cols):
+                for row in range(rows_per_col):
+                    if unit_index >= total_units:
+                        break
+                    line, prefix = lines_with_labels[unit_index]
+                    cx = sx + col * col_w
+                    cy = sy + row * (lh + kv_pad)
+                    # Draw full line
+                    draw.text((cx, cy), line, font=stats_font, fill=text_color)
+                    # Bold the label portion on the first line only
+                    if prefix:
+                        draw.text((cx, cy), prefix, font=stats_font, fill=name_color)
+                        draw.text((cx + 1, cy), prefix, font=stats_font, fill=name_color)
+                    unit_index += 1
+        # Advance to end of allocated block to ensure full column fill
+        ty = sy + stats_h
+        previous_section_drawn = True
+
     # Abilities block (maximize font while fitting total wrapped lines)
-    ty = section_header("Abilities", ty)
     abil_start = ty
+    if "abilities" in heights and abilities_h > 0:
+        if previous_section_drawn:
+            ty += inner_margin
+        # First block that lives fully under the image: if we're still
+        # above the visible bottom of the image, jump down and expand
+        # to full width so we actually use the bottom-left space.
+        if ty < img_bottom:
+            ty = img_bottom
+            if text_col_x != x:
+                text_col_x = x
+                text_col_w = content_w
+        elif ty >= img_bottom and text_col_x != x:
+            text_col_x = x
+            text_col_w = content_w
+        ty = section_header("Abilities", ty)
+        abil_start = ty
+    # Use a slightly tighter line gap for abilities so dense rules text
+    # doesn't look overly airy compared to Actions.
+    abilities_gap = 0
+
     # Determine a font size that fits all ability texts within abilities_h when possible
     def abilities_total_height(font: ImageFont.FreeTypeFont) -> int:
-        lh = draw.textbbox((0, 0), "Ag", font=font)[3] - draw.textbbox((0, 0), "Ag", font=font)[1]
+        lh = line_height_for(font)
         total = 0
         for ab in mon.abilities or []:
-            name = (ab.get("name", "").strip() + ": ") if ab.get("name") else ""
-            name_w = draw.textbbox((0, 0), name, font=font)
-            name_w = (name_w[2] - name_w[0]) if name else 0
-            _, _, lines = measure_wrapped_text(draw, (ab.get("text", "").strip()), font, text_col_w - name_w)
-            total += len(lines) * (lh + line_gap) + 2
+            name = ab.get("name", "").strip()
+            text = ab.get("text", "").strip()
+            full = f"{name}: {text}" if name else text
+            _, _, lines = measure_wrapped_text(draw, full, font, text_col_w)
+            total += len(lines) * (lh + abilities_gap) + 2
         return total
     lo, hi = 16, int(max(24, abilities_h))
     best_sz = lo
@@ -712,44 +900,60 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
     body_font = fit_font(stats_font_path, best_sz)
     name_color = (30, 20, 10, 255)
     text_color = (50, 40, 30, 255)
-    line_h = draw.textbbox((0, 0), "Ag", font=body_font)[3] - draw.textbbox((0, 0), "Ag", font=body_font)[1]
+    line_h = line_height_for(body_font)
     used_h = 0
     for ab in mon.abilities or []:
         if used_h >= abilities_h:
             break
         name = ab.get("name", "").strip()
         text = ab.get("text", "").strip()
-        if name:
-            draw.text((text_col_x, ty), name + ": ", font=body_font, fill=name_color)
-            draw.text((text_col_x+1, ty), name + ": ", font=body_font, fill=name_color)
-        name_w = draw.textbbox((0, 0), name + ": ", font=body_font)
-        name_w = (name_w[2] - name_w[0]) if name else 0
-        _, _, lines = measure_wrapped_text(draw, text, body_font, text_col_w - name_w)
-        for line in lines:
+        full = f"{name}: {text}" if name else text
+        _, _, lines = measure_wrapped_text(draw, full, body_font, text_col_w)
+        for idx, line in enumerate(lines):
             if used_h + line_h > abilities_h:
                 break
-            tx_start = text_col_x + name_w if name else text_col_x
-            draw.text((tx_start, ty), line, font=body_font, fill=text_color)
-            ty += line_h + line_gap
-            used_h += line_h + line_gap
+            # Draw the full line in normal body color first
+            draw.text((text_col_x, ty), line, font=body_font, fill=text_color)
+            # On the first line, if there is a name, overdraw just the
+            # name portion in a darker color with a slight offset to
+            # create a bold effect for the ability name only.
+            if idx == 0 and name:
+                name_prefix = f"{name}: "
+                draw.text((text_col_x, ty), name_prefix, font=body_font, fill=name_color)
+                draw.text((text_col_x + 1, ty), name_prefix, font=body_font, fill=name_color)
+            ty += line_h + abilities_gap
+            used_h += line_h + abilities_gap
         ty += 2
-    # Advance to end of allocated block
+    # Advance to end of allocated block (only changes ty meaningfully when
+    # abilities_h > 0; abil_start is initial ty otherwise)
     ty = abil_start + abilities_h
+    if abilities_h > 0:
+        previous_section_drawn = True
 
-    # Gap between blocks
-    ty += inner_margin
     # Actions block (maximize font while fitting total wrapped lines)
-    ty = section_header("Actions", ty)
     act_start = ty
+    if "actions" in heights and actions_h > 0:
+        if previous_section_drawn:
+            ty += inner_margin
+        if ty >= img_bottom and text_col_x != x:
+            text_col_x = x
+            text_col_w = content_w
+        ty = section_header("Actions", ty)
+        act_start = ty
+    # Use a tighter line gap in the Actions block so dense rules
+    # text does not look overly airy; keep it at 0 to pack lines
+    # more closely when the font size has already been reduced.
+    actions_line_gap = 0
+
     def actions_total_height(font: ImageFont.FreeTypeFont) -> int:
-        lh = draw.textbbox((0, 0), "Ag", font=font)[3] - draw.textbbox((0, 0), "Ag", font=font)[1]
+        lh = line_height_for(font)
         total = 0
         for ac in mon.actions or []:
-            name = (ac.get("name", "").strip() + ": ") if ac.get("name") else ""
-            name_w = draw.textbbox((0, 0), name, font=font)
-            name_w = (name_w[2] - name_w[0]) if name else 0
-            _, _, lines = measure_wrapped_text(draw, (ac.get("text", "").strip()), font, text_col_w - name_w)
-            total += len(lines) * (lh + line_gap) + 2
+            name = ac.get("name", "").strip()
+            text = ac.get("text", "").strip()
+            full = f"{name}: {text}" if name else text
+            _, _, lines = measure_wrapped_text(draw, full, font, text_col_w)
+            total += len(lines) * (lh + actions_line_gap)
         return total
 
     lo, hi = 16, int(max(24, actions_h))
@@ -763,33 +967,41 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
         else:
             hi = mid - 1
     body_font = fit_font(stats_font_path, best_sz)
+    line_h = line_height_for(body_font)
     used_h = 0
     for ac in mon.actions or []:
         if used_h >= actions_h:
             break
         name = ac.get("name", "").strip()
         text = ac.get("text", "").strip()
-        if name:
-            draw.text((text_col_x, ty), name + ": ", font=body_font, fill=name_color)
-            draw.text((text_col_x+1, ty), name + ": ", font=body_font, fill=name_color)
-        name_w = draw.textbbox((0, 0), name + ": ", font=body_font)
-        name_w = (name_w[2] - name_w[0]) if name else 0
-        _, _, lines = measure_wrapped_text(draw, text, body_font, text_col_w - name_w)
-        for line in lines:
+        full = f"{name}: {text}" if name else text
+        _, _, lines = measure_wrapped_text(draw, full, body_font, text_col_w)
+        for idx, line in enumerate(lines):
             if used_h + line_h > actions_h:
                 break
-            tx_start = text_col_x + name_w if name else text_col_x
-            draw.text((tx_start, ty), line, font=body_font, fill=text_color)
-            ty += line_h + line_gap
-            used_h += line_h + line_gap
-        ty += 2
+            # Draw the full line in normal body color first
+            draw.text((text_col_x, ty), line, font=body_font, fill=text_color)
+            # On the first line, if there is a name, overdraw just the
+            # name portion in a darker color with a slight offset to
+            # create a bold effect for the action name only.
+            if idx == 0 and name:
+                name_prefix = f"{name}: "
+                draw.text((text_col_x, ty), name_prefix, font=body_font, fill=name_color)
+                draw.text((text_col_x + 1, ty), name_prefix, font=body_font, fill=name_color)
+            ty += line_h + actions_line_gap
+            used_h += line_h + actions_line_gap
     # Advance to end of allocated block
     ty = act_start + actions_h
+    if actions_h > 0:
+        previous_section_drawn = True
 
-    # Gap between blocks
-    ty += inner_margin
     # Culinary Use block
-    if mon.culinary_use:
+    if "culinary" in heights and culinary_h > 0 and mon.culinary_use:
+        if previous_section_drawn:
+            ty += inner_margin
+        if ty >= img_bottom and text_col_x != x:
+            text_col_x = x
+            text_col_w = content_w
         ty = section_header("Culinary Use", ty)
         # Expand font to fill block height as much as possible (maximize within block)
         cul_font, lines = best_fit_wrapped(
@@ -801,7 +1013,7 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
             min_size=16,
             max_size=int(max(24, culinary_h))
         )
-        cul_line_h = draw.textbbox((0, 0), "Ag", font=cul_font)[3] - draw.textbbox((0, 0), "Ag", font=cul_font)[1]
+        cul_line_h = line_height_for(cul_font)
         used_h = 0
         for line in lines:
             if used_h + cul_line_h > culinary_h:
@@ -1056,6 +1268,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--font-name", default=None, help="Name/title font path or name")
     parser.add_argument("--font-lore", default=None, help="Lore font path or name")
     parser.add_argument("--font-stats", default=None, help="Stats font path or name")
+    parser.add_argument("--show-lore", action="store_true", help="Include the Lore section on cards")
+    parser.add_argument("--show-culinary", action="store_true", help="Include the Culinary Use section on cards")
     parser.add_argument("--margin", type=int, default=DEFAULT_MARGIN, help="PDF page margin (px)")
     parser.add_argument("--gutter", type=int, default=DEFAULT_GUTTER, help="PDF gutter (px)")
     parser.add_argument("--dpi-cards-per-page", type=int, default=DEFAULT_CARDS_PER_PAGE, help="Cards per page for PDF (default 9)")
@@ -1084,7 +1298,14 @@ def main(argv: Optional[List[str]] = None) -> int:
         lore=args.font_lore or (theme_cfg.lore if theme_cfg else None),
         stats=args.font_stats or (theme_cfg.stats if theme_cfg else None),
     )
-    cfg = CardConfig(width=card_w, height=card_h, dpi=args.dpi, fonts=fonts_cfg)
+    cfg = CardConfig(
+        width=card_w,
+        height=card_h,
+        dpi=args.dpi,
+        fonts=fonts_cfg,
+        show_lore=args.show_lore,
+        show_culinary=args.show_culinary,
+    )
 
     # Render cards
     cards: List[Image.Image] = []

@@ -25,7 +25,7 @@
     "actions": [
       {
         "name": "Spore Cloud (Recharge 5–6)",
-        "text": "Each creature within 10 feet of the mushroom must make a DC 12 Constitution save. On failure, a creature takes 5 (2d4) poison damage and is poisoned for 1 minute. On success, it takes half damage and isn't poisoned."
+        "text": "Each creature within 10 ft. of the mushroom must make a DC 12 Con save, taking 5 (2d4) poison damage and being poisoned for 1 minute on a failure, or half damage and not poisoned on a success."
       }
     ],
     "background": "#ddeedd",
@@ -65,11 +65,11 @@
       },
       {
         "name": "Ceiling Lurker",
-        "text": "If the slime spends at least 1 minute motionless on a ceiling or high surface, it is indistinguishable from wet stone or moss. Creatures that pass directly beneath must succeed on a DC 13 Wisdom (Perception) check to notice it."
+        "text": "If the slime spends at least 1 minute motionless on a ceiling or high surface, it looks like wet stone or moss, and creatures passing directly beneath must succeed on a DC 13 Wisdom (Perception) check to notice it."
       },
       {
         "name": "Parasitic Hunter",
-        "text": "The slime can sense the presence of a breathing creature within 30 feet by its exhalations, even if the creature is invisible or obscured, unless the creature is holding its breath."
+        "text": "The slime senses any breathing creature within 30 feet by its exhalations, even if the creature is invisible or obscured, unless it is holding its breath."
       },
       {
         "name": "Fire‑Shy",
@@ -87,7 +87,7 @@
       },
       {
         "name": "Drop Attack (Recharge 5–6)",
-        "text": "If the slime is clinging to a ceiling or higher surface and a creature moves directly beneath it, the slime can let itself fall as a special attack. The target must succeed on a DC 13 Dexterity saving throw or the slime lands on the target’s head or upper body and attaches. On a failure, the target takes 5 (1d10) acid damage and begins suffocating as the slime seals over their face. On a success, the target takes only 3 (1d6) acid damage and the slime lands in an adjacent space."
+        "text": "If the slime is clinging to a ceiling or higher surface and a creature moves directly beneath it, the slime can drop as a special attack. The target must make a DC 13 Dex save; on a failure, the slime lands on the target’s head or upper body, attaches, deals 5 (1d10) acid damage, and the target begins suffocating as the slime seals over its face. On a success, the target takes 3 (1d6) acid damage and the slime lands in an adjacent space."
       }
     ],
     "background": "#ddeeff",
@@ -123,13 +123,13 @@
     "abilities": [
       {
         "name": "Uprooted",
-        "text": "If uprooted, even unsuccessfully, the mandrake cannot make any actions, or move any distance."
+        "text": "If uprooted, even unsuccessfully, the mandrake cannot take actions or move."
       }
     ],
     "actions": [
       {
         "name": "Terrifying Scream (Recharge 5–6)",
-        "text": "Each creature within 30 feet of the mandrake that can hear it must make a DC 13 Wisdom save. On failure, a creature is frightened for 1 minute. A creature can repeat the save at the end of each of its turns, ending the effect on success. If a creature's save is successful or the effect ends for it, the creature is immune to this mandrake's scream for 24 hours."
+        "text": "Each creature within 30 ft. of the mandrake that can hear it must make a DC 13 Wis save. On a failure, the creature is frightened for 1 minute and can repeat the save at the end of each of its turns, ending the effect on a success. Once a creature succeeds on the save or the effect ends for it, it is immune to this mandrake's scream for 24 hours."
       },
       {
         "name": "Root Lash",
@@ -170,7 +170,7 @@
     "abilities": [
       {
         "name": "Stewed Armor",
-        "text": "If fire is in contact with the armor, the molluscs inside will cook through and instantly be defeated (and edible)."
+        "text": "If fire remains in contact with the armor, the mollusks inside cook through, instantly defeating it and leaving the meat edible."
       }
     ],
     "actions": [
@@ -221,11 +221,11 @@
     "abilities": [
       {
         "name": "Flock Tactics",
-        "text": "While at least one conscious harpy ally is within 5 feet of the harpy’s target, the harpy has advantage on melee attack rolls against that target."
+        "text": "While at least one conscious harpy ally is within 5 ft. of its target, the harpy has advantage on melee attacks against that target."
       },
       {
         "name": "Swooping Harrier",
-        "text": "The harpy does not provoke opportunity attacks when it flies out of a creature’s reach, as long as it moved at least 20 feet in a straight line during its turn."
+        "text": "If the harpy moved at least 20 ft. in a straight line on its turn, it does not provoke opportunity attacks when it flies out of a creature’s reach."
       }
     ],
     "actions": [
@@ -243,7 +243,7 @@
       },
       {
         "name": "Raking Dive (Recharge 5–6)",
-        "text": "While flying, the harpy dives at a creature within 30 feet of its flight path. The target must succeed on a DC 13 Dexterity saving throw or take 10 (3d6) slashing damage and be pushed up to 5 feet in a direction of the harpy’s choice. A creature pushed off a narrow bridge or ledge begins to fall as normal. On a successful save, the target takes half damage and is not pushed."
+        "text": "While flying, the harpy dives at a creature within 30 ft. of its flight path. The target must make a DC 13 Dex save or take 10 (3d6) slashing damage and be pushed up to 5 ft. in a direction of the harpy’s choice (potentially off ledges as normal). On a success, the target takes half damage and is not pushed."
       }
     ],
     "background": "#f0e0e8",
@@ -283,7 +283,7 @@
       },
       {
         "name": "Transparent",
-        "text": "Even when the ooze is in plain sight, it takes a successful Wisdom (Perception) check to spot an ooze that hasn't moved. A creature that tries to enter the ooze's space while unaware of it is surprised by the ooze."
+        "text": "Even in plain sight, an unmoving ooze requires a successful Wisdom (Perception) check to spot; a creature that enters its space while unaware of it is surprised."
       }
     ],
     "actions": [
@@ -301,7 +301,7 @@
       },
       {
         "name": "Drag Into Water (Recharge 5-6)",
-        "text": "The Kelpie attempts to pull a creature it can see within 10 feet into water it can access. The target must make a DC 13 Strength save. On a failure, the creature is pulled up to 10 feet toward the water and knocked prone."
+        "text": "The Kelpie targets a creature it can see within 10 ft.; the target must make a DC 13 Str save or be pulled up to 10 ft. toward accessible water and knocked prone."
       }
     ],
     "background": "#cceef6",
@@ -346,7 +346,7 @@
     "actions": [
       {
         "name": "Multiattack",
-        "text": "The Mermaid makes two attacks: one bite and one claws."
+        "text": "The mermaid makes two attacks: one with its bite and one with its claws."
       },
       {
         "name": "Bite",
@@ -358,7 +358,7 @@
       },
       {
         "name": "Mesmerizing Song (Recharge 5–6)",
-        "text": "The mermaid sings a haunting melody audible up to 300 feet. Each creature of choice within 60 feet that can hear the song must succeed on a DC 13 Wisdom saving throw or be charmed for 3 turns. While charmed, the creature is incapacitated and moves toward the mermaid on its turn. Affected creatures can repeat the save at the end of their turns."
+        "text": "The mermaid sings a haunting melody audible up to 300 ft. Each chosen creature within 60 ft. that can hear it must make a DC 13 Wis save or be charmed for 3 turns. While charmed, the creature is incapacitated and moves toward the mermaid on its turn, and can repeat the save at the end of each of its turns."
       }
     ],
     "background": "#cceeff",
@@ -399,11 +399,11 @@
       },
       {
         "name": "Rooted Stance",
-        "text": "While the Dryad hasn't moved on its turn, it has advantage on saving throws against effects that would move it, knock it prone, or otherwise displace it."
+        "text": "While the Dryad hasn't moved on its turn, it has advantage on saving throws against being moved, knocked prone, or otherwise displaced."
       },
       {
         "name": "Pollen Burst",
-        "text": "Upon death through physical damage, the dryad releases a cloud of pollen in a 15-foot cone. Each creature in the area must make a DC 13 Constitution saving throw, taking 14 (4d6) poison damage and becoming incapacitated for 2 turns on a failed save, or taking half damage and not being incapacitated on a success. A creature can repeat the saving throw at the end of each of its turns, ending the effect on a success."
+        "text": "When the Dryad dies from physical damage, it releases a pollen cloud in a 15-ft. cone. Each creature in the area must make a DC 13 Con save, taking 14 (4d6) poison damage and becoming incapacitated for 2 turns on a failure, or half damage and not incapacitated on a success. A creature can repeat the save at the end of each of its turns, ending the effect on a success."
       }
     ],
     "actions": [
@@ -444,11 +444,11 @@
     "abilities": [
       {
         "name": "Heat Sense",
-        "text": "The Cockatrice can sense the body heat of creatures within 60 feet as if it has truesight."
+        "text": "The Cockatrice senses the body heat of creatures within 60 ft. as if it had truesight."
       },
       {
         "name": "Reactive Strikes",
-        "text": "For each creature within 5 feet of the Cockatrice that isn't its ally, the Cockatrice can make a talon attack as a reaction when the creature moves away from it."
+        "text": "Whenever a non-ally within 5 ft. moves away from it, the Cockatrice can make a talon attack against that creature as a reaction."
       },
       {
         "name": "Legendary Resistance (1/day)",
@@ -470,7 +470,7 @@
       },
       {
         "name": "Venomous Spit (Recharge 5-6)",
-        "text": "Ranged Weapon Attack: +4 to hit, range 30 ft., one target. Hit: 11 (2d10) poison damage, and the target must succeed on a DC 14 Constitution save or begin to turn to stone as with the bite."
+        "text": "Ranged Weapon Attack: +4 to hit, range 30 ft., one target. Hit: 11 (2d10) poison damage, and the target must make a DC 14 Con save or begin to turn to stone as with the bite."
       }
     ],
     "background": "#f5f0d0",
@@ -510,21 +510,21 @@
       },
       {
         "name": "Tool Savvy",
-        "text": "The minotaur can wield simple weapons and improvised tools; it has advantage on Strength checks to break doors, chests, or restraints using whatever it can grab."
+        "text": "The minotaur can wield simple weapons and improvised tools and has advantage on Strength checks to break doors, chests, or restraints using whatever it can grab."
       }
     ],
     "actions": [
       {
         "name": "Gore",
-        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (2d8 + 6) piercing damage; if the minotaur moved at least 20 ft. straight toward the target this turn, the target takes an extra 7 (2d6) damage and must succeed on a DC 15 Strength save or be knocked prone."
+        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (2d8 + 6) piercing damage. If the minotaur moved at least 20 ft. straight toward the target this turn, the target takes an extra 7 (2d6) damage and must make a DC 15 Str save or be knocked prone."
       },
       {
         "name": "Hammerfist",
-        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) bludgeoning damage. On a hit, the target cannot take reactions until the start of its next turn as the blow rattles bone and armor."
+        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) bludgeoning damage, and the target cannot take reactions until the start of its next turn as the blow rattles bone and armor."
       },
       {
         "name": "Rend and Roar (Recharge 5–6)",
-        "text": "The minotaur makes one Gore and one Hammerfist attack against different targets it can see. Each creature hit must succeed on a DC 13 Wisdom save or be frightened of the minotaur until the end of its next turn."
+        "text": "The minotaur makes one Gore and one Hammerfist attack against different targets it can see. Each creature hit must make a DC 13 Wis save or be frightened of the minotaur until the end of its next turn."
       }
     ],
     "background": "#fbe4d5",
@@ -563,11 +563,11 @@
     "abilities": [
       {
         "name": "Legendary Actions (3/turn)",
-        "text": "Thistle can take 3 legendary actions per round, choosing from Move, Spell (spending points equal to spell level), or Teleport (dimension door)."
+        "text": "Thistle can take 3 legendary actions per round, choosing Move, Spell (spending points equal to spell level), or Teleport (dimension door)."
       },
       {
         "name": "Lair Actions",
-        "text": "On initiative count 20 (losing ties), Thistle can summon dungeon creatures or manipulate the environment by reshaping terrain, moving platforms, or opening and closing doors."
+        "text": "On initiative count 20 (losing ties), Thistle can summon dungeon creatures or reshape the environment by moving terrain, platforms, or doors."
       }
     ],
     "actions": [
@@ -581,11 +581,11 @@
       },
       {
         "name": "Spellcasting",
-        "text": "Thistle is a 9th-level spellcaster. His spell save DC is 15. He has the following spells prepared: At will: mage hand, mage hand legerdemain, prestidigitation, message; 1st level (4 slots): shield, magic missile, sleep, misdirection; 2nd level (3 slots): scorching ray, mirror image, misty step; 3rd level (3 slots): counterspell, fireball, summon undead; 4th level (3 slots): dimension door, polymorph, greater invisibility; 5th level (1 slot): telekinesis."
+        "text": "Thistle is a 9th-level spellcaster (spell save DC 15) with the following spells prepared: At will—mage hand, mage hand legerdemain, prestidigitation, message; 1st (4 slots)—shield, magic missile, sleep, misdirection; 2nd (3)—scorching ray, mirror image, misty step; 3rd (3)—counterspell, fireball, summon undead; 4th (3)—dimension door, polymorph, greater invisibility; 5th (1)—telekinesis."
       },
       {
         "name": "Psychological Attack (Recharge 5-6)",
-        "text": "Each creature Thistle can see within 60 feet must make a DC 15 Wisdom save. On failure, the creature has disadvantage on attack rolls and saves until the start of its next turn."
+        "text": "Each creature Thistle can see within 60 ft. must make a DC 15 Wis save or have disadvantage on attack rolls and saves until the start of its next turn."
       }
     ],
     "background": "#e0e0ff",
@@ -646,7 +646,7 @@
       },
       {
         "name": "Fire Breath (Recharge 5–6)",
-        "text": "The dragon exhales fire in a 60-foot cone. Each creature in that area must make a DC 17 Dexterity save, taking 54 (12d8) fire damage on a failed save, or half as much on a successful one."
+        "text": "The dragon exhales fire in a 60-ft. cone. Each creature in that area must make a DC 17 Dex save, taking 54 (12d8) fire damage on a failure, or half as much on a success."
       }
     ],
     "background": "#ffd4c4",
