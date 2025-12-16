@@ -4,7 +4,7 @@
     "title": "Monster Chef",
     "assigned_to": "One player",
     "usage_label": "Once per floor",
-    "lore": "Your mastery of dungeon cookery turns viscera into sustenance.",
+    "lore": "You are a veritable dungeon gourmand.",
     "body": "Cook 1–3 harvested monster parts to grant one 1-floor buff: +1d4 attack; +1d6 AC (max 18); heal 1d8 + party size; or chosen damage resistance. Choose a check: Cooking (Con) normal; Culinary Intuition (Int/Wis) grants advantage or an enhanced effect; Risky Delicacy (Cha DC 16) adds +1d6 temp HP on success, or causes nausea (disadvantage on one roll) on failure. On a natural 1 the dish spoils: each party member makes a DC 12 Con save or is poisoned for one floor.",
     "fonts": {}
   },

@@ -86,6 +86,49 @@ def load_json(path: str) -> List[dict]:
         return json.load(f)
 
 
+def _is_probably_grayscale(img_rgba: Image.Image, sample_step: int = 12, tolerance: int = 6) -> bool:
+    """Heuristic: sample pixels; if R≈G≈B for most, treat as grayscale."""
+    if img_rgba.mode != "RGBA":
+        img_rgba = img_rgba.convert("RGBA")
+    w, h = img_rgba.size
+    if w == 0 or h == 0:
+        return True
+    px = img_rgba.load()
+    checked = 0
+    colored = 0
+    for y in range(0, h, max(1, sample_step)):
+        for x in range(0, w, max(1, sample_step)):
+            r, g, b, a = px[x, y]
+            if a < 25:
+                continue
+            checked += 1
+            if abs(r - g) > tolerance or abs(r - b) > tolerance or abs(g - b) > tolerance:
+                colored += 1
+            if checked >= 350:
+                break
+        if checked >= 350:
+            break
+    if checked == 0:
+        return True
+    # If more than ~3% of sampled opaque pixels are "colored", treat as color.
+    return (colored / checked) <= 0.03
+
+
+def to_black_and_white(img_rgba: Image.Image, contrast: float = 1.12) -> Image.Image:
+    """Convert an RGBA image to grayscale while preserving alpha."""
+    if img_rgba.mode != "RGBA":
+        img_rgba = img_rgba.convert("RGBA")
+    r, g, b, a = img_rgba.split()
+    gray = ImageOps.grayscale(Image.merge("RGB", (r, g, b)))
+    # Mild contrast boost helps small illustrations read better after desaturation.
+    try:
+        gray = ImageEnhance.Contrast(gray).enhance(contrast)
+    except Exception:
+        pass
+    out = Image.merge("RGBA", (gray, gray, gray, a))
+    return out
+
+
 def safe_load_image(path_or_url: Optional[str], target_size: Optional[Tuple[int, int]] = None) -> Image.Image:
     """Same behavior as in monster_cards: load local image or provide placeholder."""
     placeholder_size = target_size or (256, 256)
@@ -100,6 +143,9 @@ def safe_load_image(path_or_url: Optional[str], target_size: Optional[Tuple[int,
         return placeholder_image(placeholder_size)
     try:
         img = Image.open(p).convert("RGBA")
+        # Convert color images to black & white to match the card style.
+        if not _is_probably_grayscale(img):
+            img = to_black_and_white(img)
         if target_size:
             img = ImageOps.contain(img, target_size, method=Image.LANCZOS)
         return img
@@ -249,12 +295,122 @@ def resolve_theme_fonts(theme: Optional[str]) -> Optional[FontsConfig]:
 class Treasure:
     id: Optional[str]
     title: Optional[str]
+    rarity: Optional[str]
     name: str
     effect: str
     lore: str
     image: Optional[str]
     background: Optional[str]
     fonts_overrides: Dict[str, Optional[str]] = field(default_factory=dict)
+
+
+def normalize_rarity(value: Optional[str]) -> Optional[str]:
+    if not value:
+        return None
+    v = str(value).strip().lower()
+    if v in {"common", "c", "normal"}:
+        return "Common"
+    if v in {"rare", "r"}:
+        return "Rare"
+    if v in {"legendary", "legend", "l"}:
+        return "Legendary"
+    if v in {"curse", "cursed", "trap", "negative"}:
+        return "Curse"
+    return str(value).strip()
+
+
+def apply_rarity_border(img_rgb: Image.Image, rarity: Optional[str]) -> Image.Image:
+    r = normalize_rarity(rarity)
+    if not r:
+        return img_rgb
+
+    # Border colors are only an overlay hint; feel free to tweak.
+    colors = {
+        "Common": (60, 120, 200),
+        "Rare": (200, 60, 60),
+        "Legendary": (140, 80, 200),
+        "Curse": (20, 20, 20),
+    }
+    color = colors.get(r)
+    if not color:
+        return img_rgb
+
+    base = img_rgb.convert("RGBA")
+    w, h = base.size
+    thickness = max(8, int(min(w, h) * 0.026))
+    inset = max(10, int(min(w, h) * 0.02))
+    radius = max(14, int(min(w, h) * 0.03))
+
+    overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+    d = ImageDraw.Draw(overlay)
+
+    # Subtle outer glow (two soft strokes).
+    glow = tuple(int(c * 0.85) for c in color)
+    d.rounded_rectangle(
+        (2, 2, w - 3, h - 3),
+        radius=radius,
+        outline=glow + (90,),
+        width=max(2, thickness // 4),
+    )
+    d.rounded_rectangle(
+        (4, 4, w - 5, h - 5),
+        radius=max(6, radius - 4),
+        outline=glow + (70,),
+        width=max(2, thickness // 5),
+    )
+
+    # Main ornamental frame (rounded).
+    d.rounded_rectangle(
+        (0, 0, w - 1, h - 1),
+        radius=radius,
+        outline=color + (255,),
+        width=thickness,
+    )
+
+    # Inner accent line.
+    inner_box = (inset, inset, w - 1 - inset, h - 1 - inset)
+    inner_radius = max(6, radius - inset // 2)
+    accent = tuple(int(c + (255 - c) * 0.45) for c in color)
+    d.rounded_rectangle(
+        inner_box,
+        radius=inner_radius,
+        outline=accent + (210,),
+        width=max(2, thickness // 6),
+    )
+
+    # Corner flourishes: small diamonds + short ticks.
+    fx = inset + max(8, thickness)
+    fy = inset + max(8, thickness)
+    size = max(10, int(min(w, h) * 0.02))
+    tick = max(10, int(min(w, h) * 0.035))
+    tick_w = max(2, thickness // 7)
+    flourish = accent + (220,)
+
+    corners = [
+        (fx, fy),
+        (w - 1 - fx, fy),
+        (fx, h - 1 - fy),
+        (w - 1 - fx, h - 1 - fy),
+    ]
+    for cx, cy in corners:
+        diamond = [(cx, cy - size), (cx + size, cy), (cx, cy + size), (cx - size, cy)]
+        d.polygon(diamond, outline=flourish)
+
+    # Ticks from corners along edges.
+    d.line((inner_box[0], inner_box[1] + tick, inner_box[0], inner_box[1]), fill=flourish, width=tick_w)
+    d.line((inner_box[0] + tick, inner_box[1], inner_box[0], inner_box[1]), fill=flourish, width=tick_w)
+
+    d.line((inner_box[2], inner_box[1] + tick, inner_box[2], inner_box[1]), fill=flourish, width=tick_w)
+    d.line((inner_box[2] - tick, inner_box[1], inner_box[2], inner_box[1]), fill=flourish, width=tick_w)
+
+    d.line((inner_box[0], inner_box[3] - tick, inner_box[0], inner_box[3]), fill=flourish, width=tick_w)
+    d.line((inner_box[0] + tick, inner_box[3], inner_box[0], inner_box[3]), fill=flourish, width=tick_w)
+
+    d.line((inner_box[2], inner_box[3] - tick, inner_box[2], inner_box[3]), fill=flourish, width=tick_w)
+    d.line((inner_box[2] - tick, inner_box[3], inner_box[2], inner_box[3]), fill=flourish, width=tick_w)
+
+    out = Image.alpha_composite(base, overlay)
+    return out.convert("RGB")
 
 
 @dataclass
@@ -310,6 +466,53 @@ def best_fit_wrapped(draw: ImageDraw.ImageDraw, text: str, font_path: Optional[s
             hi = mid - 1
     if not best_lines:
         best_lines = [text]
+    return best_font, best_lines
+
+
+def best_fit_wrapped_fill(
+    draw: ImageDraw.ImageDraw,
+    text: str,
+    font_path: Optional[str],
+    max_width: int,
+    max_height: int,
+    min_size: int,
+    max_size: int,
+    fill_target: float = 0.9,
+) -> Tuple[ImageFont.FreeTypeFont, List[str]]:
+    """Like best_fit_wrapped, but tries to *use* available height.
+
+    It picks the largest font that fits; if it still leaves too much empty
+    space (text too short), it keeps increasing size until reaching max_size
+    or approaching `fill_target` of the height.
+    """
+    if max_width <= 0 or max_height <= 0:
+        return fit_font(font_path, min_size), [text]
+
+    font, lines = best_fit_wrapped(
+        draw,
+        text,
+        font_path,
+        max_width=max_width,
+        max_height=max_height,
+        min_size=min_size,
+        max_size=max_size,
+    )
+    _, h, _ = measure_wrapped_text(draw, text, font, max_width)
+    target_h = int(max_height * fill_target)
+    if h >= target_h:
+        return font, lines
+
+    # Nudge font size upward to better fill the available space.
+    current_size = getattr(font, "size", min_size)
+    best_font, best_lines = font, lines
+    for size in range(int(current_size) + 1, int(max_size) + 1):
+        candidate = fit_font(font_path, size)
+        _, cand_h, cand_lines = measure_wrapped_text(draw, text, candidate, max_width)
+        if cand_h > max_height:
+            break
+        best_font, best_lines = candidate, cand_lines
+        if cand_h >= target_h:
+            break
     return best_font, best_lines
 
 
@@ -375,67 +578,78 @@ def render_treasure_card(t: Treasure, cfg: CardConfig) -> Image.Image:
         draw_rounded_image(base, shadow, shadow_box, radius=24)
     draw_rounded_image(base, profile, img_box, radius=24)
 
-    def shrink_single_line(draw: ImageDraw.ImageDraw, text: str, font_path: Optional[str], start_size: int, max_width: int, min_size: int = 8) -> Tuple[ImageFont.FreeTypeFont, str]:
-        """Return a font and text rendered on a single line that fits within max_width by shrinking size only.
-
-        No ellipsis is ever added; we only reduce the font size until the
-        rendered width is within bounds (or hit min_size).
-        """
-        size = start_size
-        best_font = fit_font(font_path, size)
-        while size >= min_size:
-            f = fit_font(font_path, size)
-            w = draw.textbbox((0, 0), text, font=f)[2]
-            if w <= max_width:
-                best_font = f
-                break
-            size -= 1
-        return best_font, text
-
     ty = y
-    # Optional category title at very top, smaller than name.
-    # We only shrink the font to fit; we never add ellipses.
-    if t.title:
-        base_cat_size = int(LH * 0.045)
-        cat_font, cat_text = shrink_single_line(draw, t.title, name_font_path, base_cat_size, text_col_w)
-        ch = draw.textbbox((0, 0), cat_text, font=cat_font)[3] - draw.textbbox((0, 0), cat_text, font=cat_font)[1]
-        draw.text((text_col_x, ty), cat_text, font=cat_font, fill=(40, 30, 20, 255))
-        ty += ch + int(pad * 0.15)
 
-    # Treasure name: shrink-to-fit rather than fixed size so long names don't get clipped.
-    # Start from monster-style size but allow downscaling until it fits in one line.
-    base_name_size = max(18, int(LH * 0.09))
-    name_text = t.name or "Unknown Treasure"
-    name_font, name_text = shrink_single_line(
+    # Reserve a dedicated header band so title/subtitle always have breathing room.
+    header_h = int(content_h * 0.24)
+    header_y0 = ty
+    header_y1 = ty + header_h
+
+    title_text = (t.title or "").strip()
+    subtitle_text = (t.name or "Unknown Treasure").strip()
+
+    # Title: allow wrapping to 2 lines but keep it large.
+    if title_text:
+        title_max_h = int(header_h * 0.38)
+        title_font, title_lines = best_fit_wrapped_fill(
+            draw,
+            title_text,
+            name_font_path,
+            max_width=text_col_w,
+            max_height=title_max_h,
+            min_size=max(12, int(LH * 0.04)),
+            max_size=max(14, int(LH * 0.06)),
+            fill_target=0.85,
+        )
+        # Hard cap to 2 lines for the header title.
+        title_lines = title_lines[:2]
+        _, title_h, _ = measure_wrapped_text(draw, "\n".join(title_lines), title_font, text_col_w)
+        line_h = draw.textbbox((0, 0), "Ag", font=title_font)[3] - draw.textbbox((0, 0), "Ag", font=title_font)[1]
+        for line in title_lines:
+            draw.text((text_col_x, ty), line, font=title_font, fill=(40, 30, 20, 255))
+            ty += line_h + 2
+        ty += int(pad * 0.10)
+
+    # Subtitle (name): allow wrapping to 2 lines and keep bold/large.
+    subtitle_max_h = header_y1 - ty
+    subtitle_font, subtitle_lines = best_fit_wrapped_fill(
         draw,
-        name_text,
+        subtitle_text,
         name_font_path,
-        base_name_size,
-        text_col_w,
-        min_size=8,
+        max_width=text_col_w,
+        max_height=max(0, subtitle_max_h),
+        min_size=max(16, int(LH * 0.065)),
+        max_size=max(18, int(LH * 0.095)),
+        fill_target=0.9,
     )
-    nh = draw.textbbox((0, 0), name_text, font=name_font)[3] - draw.textbbox((0, 0), name_text, font=name_font)[1]
-    draw.text((text_col_x, ty), name_text, font=name_font, fill=(30, 20, 10, 255))
-    draw.text((text_col_x + 1, ty), name_text, font=name_font, fill=(30, 20, 10, 255))
-    ty += nh + int(pad * 0.3)
+    subtitle_lines = subtitle_lines[:2]
+    subtitle_line_h = draw.textbbox((0, 0), "Ag", font=subtitle_font)[3] - draw.textbbox((0, 0), "Ag", font=subtitle_font)[1]
+    for line in subtitle_lines:
+        draw.text((text_col_x, ty), line, font=subtitle_font, fill=(30, 20, 10, 255))
+        draw.text((text_col_x + 1, ty), line, font=subtitle_font, fill=(30, 20, 10, 255))
+        ty += subtitle_line_h + 2
+
+    # Move to the end of the header band regardless of how much text was used.
+    ty = header_y1 + int(pad * 0.10)
 
     remaining_h = content_h - (ty - y)
-    effect_pct = 0.55
-    lore_pct = 0.45
-    inner_margin = max(6, int(LH * 0.012))
+    effect_pct = 0.58
+    lore_pct = 0.42
+    inner_margin = max(6, int(LH * 0.014))
     total_block_margins = inner_margin
     usable_h = max(0, remaining_h - total_block_margins)
     effect_h = int(usable_h * effect_pct)
     lore_h = max(0, usable_h - effect_h)
 
-    effect_font, effect_lines = best_fit_wrapped(
+    effect_font, effect_lines = best_fit_wrapped_fill(
         draw,
         t.effect or "",
         effect_font_path,
         max_width=text_col_w,
         max_height=int(effect_h),
         min_size=10,
-        max_size=int(max(12, effect_h)) or 12,
+        max_size=max(14, int(effect_h * 0.22)),
+        fill_target=0.9,
     )
     effect_line_h = draw.textbbox((0, 0), "Ag", font=effect_font)[3] - draw.textbbox((0, 0), "Ag", font=effect_font)[1]
     used_h = 0
@@ -448,14 +662,15 @@ def render_treasure_card(t: Treasure, cfg: CardConfig) -> Image.Image:
 
     ty = y + (content_h - lore_h)
 
-    lore_font, lore_lines = best_fit_wrapped(
+    lore_font, lore_lines = best_fit_wrapped_fill(
         draw,
         t.lore or "",
         lore_font_path,
         max_width=text_col_w,
         max_height=int(lore_h),
         min_size=10,
-        max_size=int(max(12, lore_h)) or 12,
+        max_size=max(14, int(lore_h * 0.22)),
+        fill_target=0.9,
     )
     italic_fill = (50, 40, 30, 255)
     lore_line_h = draw.textbbox((0, 0), "Ag", font=lore_font)[3] - draw.textbbox((0, 0), "Ag", font=lore_font)[1]
@@ -639,6 +854,7 @@ def read_treasures(path: Optional[str], demo: bool = False, images_dir: str = ".
             Treasure(
                 id=item.get("id"),
                 title=item.get("title"),
+                rarity=item.get("rarity"),
                 name=name,
                 effect=item.get("effect") or "",
                 lore=item.get("lore") or "",
@@ -670,7 +886,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("input", nargs="?", help="Input JSON file containing treasures")
     parser.add_argument("--outdir", default="./out_cards", help="Directory to save PNGs")
     parser.add_argument("--images-dir", default="./images", help="Default images directory for treasure art")
-    parser.add_argument("--theme", default=None, help="Apply a curated font theme (e.g., 'fantasy'); looks for TTFs in ./fonts")
+    parser.add_argument("--theme", default="fantasy", help="Apply a curated font theme (e.g., 'fantasy'); looks for TTFs in ./fonts")
     parser.add_argument("--pdf", default=None, help="Optional output PDF path")
     parser.add_argument("--pdf-bg", default=None, help="Optional PDF page background image path (A4 portrait)")
     parser.add_argument("--dpi", type=int, default=300, help="DPI for output images")
@@ -683,7 +899,8 @@ def main(argv: Optional[List[str]] = None) -> int:
     parser.add_argument("--margin", type=int, default=DEFAULT_MARGIN, help="PDF page margin (px)")
     parser.add_argument("--gutter", type=int, default=DEFAULT_GUTTER, help="PDF gutter (px)")
     parser.add_argument("--dpi-cards-per-page", type=int, default=DEFAULT_CARDS_PER_PAGE, help="Cards per page for PDF (default 9)")
-    parser.add_argument("--full-bleed", action="store_true", help="Fill entire PDF page with the 3x3 grid (no margins/gutters)")
+    parser.add_argument("--full-bleed", action="store_true", default=True, help="Fill entire PDF page with the 3x3 grid (no margins/gutters)")
+    parser.add_argument("--no-full-bleed", action="store_false", dest="full_bleed", help="Disable full-bleed PDF layout (restore margins/gutters)")
     parser.add_argument("--cut-lines", action="store_true", help="Draw cut guide lines between cards on the PDF page")
     parser.add_argument("--cut-line-width", type=float, default=0.5, help="Cut line width in points (PDF units)")
     parser.add_argument("--demo", action="store_true", help="Generate sample cards from example_treasures.json")
@@ -712,6 +929,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     for i, t in enumerate(treasures):
         info(f"Rendering treasure card {i+1}/{len(treasures)}: {t.name}")
         img = render_treasure_card(t, cfg)
+        img = apply_rarity_border(img, t.rarity)
         cards.append(img)
 
     save_pngs(cards, treasures, args.outdir)

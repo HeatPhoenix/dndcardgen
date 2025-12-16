@@ -86,6 +86,8 @@ python monster_cards.py [INPUT_JSON] [OPTIONS]
 - `--pdf-bg FILE` - Background image for PDF pages
 - `--full-bleed` - Remove margins/gutters for full-page coverage
 - `--cut-lines` - Draw cutting guide lines between cards
+- `--dpi-cards-per-page N` - Cards per page (default: 9)
+- `--cut-line-width N` - Cut line width in points (default: 0.5)
 - `--cut-line-width N` - Cut line width in points (default: 0.5)
 
 ### Examples
@@ -158,6 +160,16 @@ Create a JSON file with an array of monster objects:
   }
 ]
 ```
+
+### Treasure Cards: Rarity
+
+When using `treasure_cards.py`, you can optionally include a `rarity` field to control the colored border on the front face of the card:
+
+- `Common`: blue border
+- `Rare`: red border
+- `Legendary`: purple border
+
+If `rarity` is omitted, the script infers it from `name`/`effect`/`lore`.
 
 ### Field Descriptions
 
