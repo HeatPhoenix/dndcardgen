@@ -196,5 +196,23 @@
   "effect": "Summon the undine Marillier (AC 15, HP 22, Speed 30ft). Can cast Water Jet once per turn (ranged spell attack +4, 2d6 cold damage, 60ft range). Lasts until destroyed or dismissed.",
   "lore": "A small container holding the undine Marillier. Attached are instructions for care, bonding and commands. Seems the previous caretaker loved these spirits very much.",
   "image": "treasure_img/elemental_container.png"
+  },
+  {
+    "id": "23",
+    "title": "TREASURE CHEST REWARD CARD",
+    "rarity": "Legendary",
+  "name": "SCROLL OF WATER WALK",
+    "effect": "A scroll that teaches your mage or cleric the spell Water Walk. This spell allows (as ritual) up to 5 willing creatures to walk on water for 1 floor. Spell is cancelled if caster dies.",
+    "lore": "Rumor has it that this spell was once used on an aquatic monster to force it to surface. It's normally used to cross water safely, though.",
+  "image": "treasure_img/scrollofwaterwalk.png"
+  },
+  {
+    "id": "24",
+    "title": "TREASURE CHEST REWARD CARD",
+    "rarity": "Legendary",
+    "name": "TELEPORTATION TOME",
+    "effect": "A tome containing the secrets of advanced teleportation magic. Once per floor, the reader can teleport an adjacent enemy (within 5 feet) to any visible location.",
+    "lore": "The most powerful captain of the Canaries uses magic much like this offensively, teleporting foes into walls and objects. Even teleporting objects through enemies to slice them apart.",
+    "image": "treasure_img/teleportationtome.png"
   }
 ]
