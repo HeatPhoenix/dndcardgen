@@ -278,13 +278,9 @@
     },
     "abilities": [
       {
-        "name": "Amorphous",
-        "text": "The ooze can occupy another creature's space and vice versa."
+        "name": "Charming",
+        "text": "Kelpie has advantage on any charisma checks made to interact socially with humanoids."
       },
-      {
-        "name": "Transparent",
-        "text": "Even in plain sight, an unmoving ooze requires a successful Wisdom (Perception) check to spot; a creature that enters its space while unaware of it is surprised."
-      }
     ],
     "actions": [
       {
