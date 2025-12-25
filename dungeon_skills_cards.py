@@ -348,7 +348,7 @@ def render_skill_card(skill: DungeonSkill, cfg: CardConfig) -> Image.Image:
     remaining_after_title = max(0, bottom_y - ty)
 
     # Proportions for lore and usage out of the remaining space; body gets the rest
-    lore_h = int(remaining_after_title * 0.18)
+    lore_h = int(remaining_after_title * 0.22)
     usage_h = int(remaining_after_title * 0.10)
 
     # Use consistent line spacing in measure and draw

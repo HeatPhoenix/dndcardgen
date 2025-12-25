@@ -280,7 +280,7 @@
       {
         "name": "Charming",
         "text": "Kelpie has advantage on any charisma checks made to interact socially with humanoids."
-      },
+      }
     ],
     "actions": [
       {
@@ -646,6 +646,199 @@
       }
     ],
     "background": "#ffd4c4",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "winged_lion_bound_form",
+    "name": "Winged Lion (Bound Form)",
+    "profile_image": "images/demon.png",
+    "size": "Large",
+    "type": "fiend (demon)",
+    "lore": "A dungeon-bound demon-lion with wings and a voice that twists desire into weakness. When slain, it does not die—it sheds restraint and reforms as its true self.",
+    "culinary_use": null,
+    "statblock": {
+      "Armor Class": "16 (natural armor)",
+      "Hit Points": "140 (16d10 + 48)",
+      "Speed": "40 ft., fly 40 ft. (hover)",
+      "STR": "18 (+4)",
+      "DEX": "12 (+1)",
+      "CON": "18 (+4)",
+      "INT": "16 (+3)",
+      "WIS": "14 (+2)",
+      "CHA": "18 (+4)",
+      "Saving Throws": "Con +8, Wis +6, Cha +8",
+      "Skills": "Deception +8, Insight +6, Perception +6",
+      "Damage Resistances": "fire, lightning; bludgeoning, piercing, slashing from nonmagical attacks",
+      "Damage Immunities": "psychic",
+      "Condition Immunities": "charmed, frightened",
+      "Senses": "darkvision 120 ft., passive Perception 16",
+      "Languages": "all, telepathy 120 ft.",
+      "Challenge": "8 (3,900 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Dungeon-Bound Existence",
+        "text": "The Winged Lion cannot leave the dungeon and cannot be banished. When reduced to 0 hit points, it does not die; instead it triggers its Greater Demon phase."
+      },
+      {
+        "name": "Devour Desire (Soft)",
+        "text": "At the start of its turn, one creature the Lion can see within 60 ft. must succeed on a DC 14 Wisdom saving throw or have disadvantage on its next attack roll or saving throw."
+      },
+      {
+        "name": "Lair Actions (Bound Form)",
+        "text": "On initiative count 20 (losing ties), choose one: Dungeon Call (DC 14 Wis save or move 10 ft. toward danger); Shifting Stone (10-ft radius difficult terrain; creatures there take 7 (2d6) bludgeoning); Seal Passage (one exit becomes difficult terrain until next round)."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The Winged Lion makes two Claw of Temptation attacks."
+      },
+      {
+        "name": "Claw of Temptation",
+        "text": "Melee Weapon Attack: +7 to hit, reach 10 ft., one target. Hit: 12 (2d8 + 4) slashing damage. If the target is below half HP, it must succeed on a DC 14 Wisdom saving throw or be charmed until the end of its next turn."
+      },
+      {
+        "name": "Wish-Twisting Roar (Recharge 5–6)",
+        "text": "Creatures of the Lion’s choice within 30 ft. must make a DC 14 Wisdom saving throw. Failure: 18 (4d8) psychic damage and speed becomes 0 until the end of next turn. Success: half damage, no speed reduction."
+      }
+    ],
+    "background": "#efe6da",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "winged_lion_greater_demon_form",
+    "name": "Winged Lion (Greater Demon Form)",
+    "profile_image": "images/greaterdemon.png",
+    "size": "Huge",
+    "type": "fiend (demon)",
+    "lore": "The Lion’s true form: unbound hunger given shape. It warps the dungeon around it and manifests lesser beasts to hunt.",
+    "culinary_use": null,
+    "statblock": {
+      "Armor Class": "17 (natural armor)",
+      "Hit Points": "110 (13d12 + 26)",
+      "Speed": "40 ft., fly 60 ft. (hover)",
+      "STR": "20 (+5)",
+      "DEX": "12 (+1)",
+      "CON": "20 (+5)",
+      "INT": "18 (+4)",
+      "WIS": "16 (+3)",
+      "CHA": "20 (+5)",
+      "Saving Throws": "Con +9, Wis +7, Cha +9",
+      "Damage Resistances": "fire, lightning; bludgeoning, piercing, slashing from nonmagical attacks",
+      "Damage Immunities": "psychic",
+      "Condition Immunities": "charmed, frightened",
+      "Senses": "truesight 60 ft., passive Perception 16",
+      "Languages": "all, telepathy 120 ft.",
+      "Challenge": "9 (5,000 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Embodiment of Hunger",
+        "text": "At the start of each of its turns, the Lion targets two creatures it can see. Each must succeed on a DC 15 Wisdom saving throw or take 7 (2d6) psychic damage."
+      },
+      {
+        "name": "Unbound Mana",
+        "text": "The Winged Lion ignores difficult terrain and can move through dungeon structures as if they were difficult terrain (no damage)."
+      },
+      {
+        "name": "Lair Actions (Greater Form)",
+        "text": "Choose one per round: Warped Reality (15-ft radius difficult terrain; creatures there take 10 (3d6) bludgeoning); Echoed Desire (one creature has disadvantage on all rolls until next turn; Wis save negates); Dungeon Surge (use Manifest Dungeon Beast if none exists)."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Multiattack",
+        "text": "The Winged Lion makes one Rending Claw attack and uses one special action."
+      },
+      {
+        "name": "Rending Claw",
+        "text": "Melee Weapon Attack: +8 to hit, reach 10 ft., one target. Hit: 16 (2d10 + 5) slashing damage."
+      },
+      {
+        "name": "Manifest Dungeon Beast",
+        "text": "The Lion creates one CR 2 dungeon monster in an unoccupied space within 30 ft. Only one such creature may exist at a time."
+      },
+      {
+        "name": "Desire Collapse (Recharge 5–6)",
+        "text": "Creatures of the Lion’s choice within 30 ft. must make a DC 15 Wisdom saving throw. Failure: 22 (4d10) psychic damage and are stunned until the end of their next turn. Success: half damage, not stunned."
+      }
+    ],
+    "background": "#eadfe0",
+    "fonts": {
+      "name": null,
+      "lore": null,
+      "stats": null
+    }
+  },
+  {
+    "id": "mithrun_captain_of_the_canaries",
+    "name": "The Canaries",
+    "profile_image": "images/canaries.png",
+    "size": "Medium",
+    "type": "humanoid (elf)",
+    "lore": "The Canaries, led by Mithrun, are a group of elves sent from the west to investigate and take control of dungeons. It does not concern them who is sealed inside when they do.",
+    "statblock": {
+      "Armor Class": "16 (mage armor)",
+      "Hit Points": "112 (9d8 + 45)",
+      "Speed": "30 ft.",
+      "STR": "10 (+0)",
+      "DEX": "14 (+2)",
+      "CON": "16 (+3)",
+      "INT": "18 (+4)",
+      "WIS": "14 (+2)",
+      "CHA": "10 (+0)",
+      "Saving Throws": "Dex +6, Int +8",
+      "Skills": "Arcana +8, Perception +6",
+      "Senses": "Darkvision 60 ft., passive Perception 16",
+      "Languages": "Common, Elvish",
+      "Challenge": "7 (2,900 XP)"
+    },
+    "abilities": [
+      {
+        "name": "Teleportation Mastery",
+        "text": "Mithrun can teleport himself up to 30 ft. as part of his movement (no action required)."
+      },
+      {
+        "name": "Arcane Discipline",
+        "text": "Spell save DC 16, spell attack +8 (Intelligence)."
+      },
+      {
+        "name": "Legendary Resistance (Once)",
+        "text": "If Mithrun fails a saving throw, he can choose to succeed instead."
+      }
+    ],
+    "actions": [
+      {
+        "name": "Teleportation Manipulation (Mithrun)",
+        "text": "Melee Spell Attack: +8 to hit, reach 5 ft., one creature. Hit: Mithrun chooses: Transposition (teleport target to unoccupied space Mithrun can see within 60 ft.) or Displacement (an object within 60 ft. is teleported into target; the target takes 2d10 bludgeoning or slashing damage, DM's choice)."
+      },
+      {
+        "name": "Familiar Assault",
+        "text": "Ranged magical assault; range 60 ft. The target must make a DC 16 Intelligence or Dexterity saving throw, taking 2d8 piercing damage on a failure, or half as much on a success."
+      },
+      {
+        "name": "Earth Shift",
+        "text": "The canary targets a point within 60 ft. The ground in a 10-ft-radius becomes difficult terrain until the end of his next turn. Creatures standing in the area when it forms must succeed on a DC 16 STR saving throw or take 3d8 bludgeoning damage."
+      },
+      {
+        "name": "Spatial Reposition (Reaction)",
+        "text": "When Mithrun or an ally within 30 ft. is targeted by an attack, Mithrun teleports that creature to an unoccupied space within 30 ft. and becomes the new target of the attack."
+      },
+      {
+        "name": "Restorative Magic",
+        "text": "The Canary touches a creature within 5 ft., creature regains 4d8 hit points. Cures poisoned or frightened."
+      }
+    ],
+    "background": "#e9edf7",
     "fonts": {
       "name": null,
       "lore": null,

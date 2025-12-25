@@ -5,7 +5,7 @@
     "assigned_to": "One player",
     "usage_label": "Once per floor",
     "lore": "You are a veritable dungeon gourmand.",
-    "body": "Cook 1–3 harvested monster parts to grant one 1-floor buff: +1d4 attack; +1d6 AC (max 18); heal 1d8 + party size; or chosen damage resistance. Choose a check: Cooking (Con) normal; Culinary Intuition (Int/Wis) grants advantage or an enhanced effect; Risky Delicacy (Cha DC 16) adds +1d6 temp HP on success, or causes nausea (disadvantage on one roll) on failure. On a natural 1 the dish spoils: each party member makes a DC 12 Con save or is poisoned for one floor.",
+    "body": "Cook 1–3 monster parts to grant one 1-floor buff: +1d4 attack; +1d6 AC (max 18); heal 1d8 + party size; or gain a chosen damage resistance. Choose a check: Cooking (Con) normal; Culinary Intuition (Int/Wis) gives advantage or improves the effect; Risky Delicacy (Cha DC 16) adds +1d6 temp HP on success, or nausea (disadvantage on one roll) on failure. On a natural 1, the dish spoils: each party member makes a DC 12 Con save or is poisoned for one floor.",
     "fonts": {}
   },
   {
@@ -14,7 +14,7 @@
     "assigned_to": "The spellcaster or cleric",
     "usage_label": "Once per two floors",
     "lore": "Dark magic bends death itself to your will, but power always demands payment.",
-    "body": "Once per two floors, you may perform a ritual to revive a dead party member or significant NPC. The creature returns to life fully restored, but exhausted. This exhaustion fades after a long rest or upon entry to the next floor.",
+    "body": "Once per two floors, you may perform a ritual to revive a dead party member or significant NPC. They return fully restored, but exhausted; the exhaustion ends after a long rest (meal) or on entering the next floor.",
     "fonts": {}
   },
   {
@@ -23,7 +23,7 @@
     "assigned_to": "The most charismatic character",
     "usage_label": "Once per day",
     "lore": "You understand humans in ways others don't—their motivations, fears, and weaknesses.",
-    "body": "Once per day, when you make a social check such as Persuasion, Deception, or Intimidation against a humanoid enemy or NPC, you have advantage on the roll. This applies to dialogue with rival adventurers, human mercenaries, or other humanoids during confrontations. You may also attempt creative, improvised solutions against humanoid enemies during combat; such checks are made at advantage.",
+    "body": "Once per day, you have advantage on one social check (Persuasion, Deception, or Intimidation) against a humanoid enemy or NPC. This applies in dialogue and in combat improvisation checks against humanoids.",
     "fonts": {}
   },
   {
@@ -32,16 +32,16 @@
     "assigned_to": "The rogue or most dexterous character",
     "usage_label": "Once per floor",
     "lore": "Your keen senses reveal hidden paths and deadly mechanisms.",
-    "body": "Once per floor, you may spend ten minutes thoroughly searching an area for hidden passages, trapped doors, or environmental hazards. Make an Investigation check (DC 12). On a success, you discover a useful hidden feature such as a shortcut, a trap you can disarm, a safe passage, or additional resources like food, treasure, or monster parts. On a failed check, you trigger a minor trap that deals 1d6 damage, but you still learn its location for later.",
+    "body": "Once per floor, spend 10 minutes searching for hidden passages, traps, or hazards. Make an Investigation check (DC 12). Success: discover a useful feature (shortcut, disarmable trap, safe route, or extra resources like food/treasure/monster parts). Failure: trigger a minor trap (1d6 damage), but you learn its location.",
     "fonts": {}
   },
   {
     "id": 5,
     "title": "Iaijutsu",
-    "assigned_to": "Fighter (long sword user)",
+    "assigned_to": "Fighter or Ninja (long sword user)",
     "usage_label": "Once per long rest",
     "lore": "Your training in the Eastern Archipelago has focused your mind, and now your mind focuses your blade.",
-    "body": "Before attacking a designated non-boss, make a Dex check vs DC 12 + target proficiency (min 12). On success, the target drops to 0 HP (dies outright). On failure, you still hit and deal double damage.",
+    "body": "Before attacking a designated non-boss, make a Dex check vs DC 12 + the target’s proficiency (min 12). Success: the target drops to 0 HP. Failure: you still hit and deal double damage.",
     "fonts": {}
   },
   {
@@ -50,7 +50,7 @@
     "assigned_to": "The beast-cursed human or kobold",
     "usage_label": "Once per floor",
     "lore": "Your curse grants you beastly abilities incompatible with your human self. Your soul is melded with that of a beast, and both halves of you now share one life.",
-    "body": "Once per floor, when combat is about to begin, you may automatically win initiative for that encounter. You act first, before any other creature rolls. After you use this skill, you must roll initiative normally for all subsequent encounters on that floor and beyond.",
+    "body": "Once per floor, when combat is about to begin, you automatically win initiative for that encounter and act first. After using this, you roll initiative normally for the rest of the floor (and beyond).",
     "fonts": {}
   },
   {
@@ -59,7 +59,25 @@
     "assigned_to": "The most monster-obsessed character",
     "usage_label": "Once per floor",
     "lore": "Your love of monsters is so great that you once considered studying to become a monster researcher.",
-    "body": "Once per floor, you may ask the DM three questions about any monster—its weaknesses, hit points, upcoming encounters, or other relevant details. The answers are mostly perfectly detailed, reflecting your encyclopedic knowledge of the dungeon and its denizens.",
+    "body": "Once per floor, ask the DM three questions about a monster (weaknesses, HP, upcoming encounters, or other relevant details). The answers are mostly perfectly detailed.",
+    "fonts": {}
+  },
+  {
+    "id": 8,
+    "title": "Weapons Expert",
+    "assigned_to": "The most weapon-obsessed character",
+    "usage_label": "Upon finding a weapon, once per floor",
+    "lore": "Your relatives were weapons dealers; growing up, you saw every variety of arms used by tall-men, dwarves, and elves. Curiosity became skill, obsession, and an unshakable urge to fuss over other people’s weapons.",
+    "body": "Upon finding a weapon in the dungeon, you may restore it to proper working order and choose one permanent upgrade: (1) Sharp Edge: +1 damage. (2) Crossguard: +1 AC while Dodging or vs opportunity attacks. (3) Weighted Head: double damage to objects/structures.",
+    "fonts": {}
+  },
+  {
+    "id": 9,
+    "title": "Summoner",
+    "assigned_to": "A Mage or Cleric (elves may also summon a fairy)",
+    "usage_label": "Whenever (cost: 1 Meal Meter)",
+    "lore": "During your magical studies, one of your favorite electives was summoning. You dabbled in familiars of all shapes and sizes, but you think you’ve finally found your favorite.",
+    "body": "Spend 1 Meal Meter to summon a familiar (ritual). Choose: Raven (AC 15, HP 4, speed 60 ft, darkvision; Peck +4 to hit, 1d4; you can use its senses). If you’re an elf, you may instead summon a Fairy (AC 15, HP 4, speed 30 ft; no attacks; you gain advantage on magic and it can communicate for you).",
     "fonts": {}
   }
 ]

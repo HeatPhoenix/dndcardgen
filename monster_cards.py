@@ -611,7 +611,7 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
 
     base_lore_pct = 0.28
     base_stats_pct = 0.14
-    base_abilities_pct = 0.22
+    base_abilities_pct = 0.18
     base_actions_pct = 0.26
     base_culinary_pct = 0.10
 
@@ -870,64 +870,86 @@ def render_card(mon: Monster, cfg: CardConfig) -> Image.Image:
         elif ty >= img_bottom and text_col_x != x:
             text_col_x = x
             text_col_w = content_w
+        # Use a slightly tighter line gap for abilities so dense rules text
+        # doesn't look overly airy compared to Actions.
+        abilities_gap = 0
+
+        # Determine a font size that fits all ability texts within abilities_h when possible.
+        # We also cap the maximum ability font size so that a single short ability
+        # doesn't explode to fill a huge block.
+        def abilities_total_height(font: ImageFont.FreeTypeFont) -> int:
+            lh = line_height_for(font)
+            total = 0
+            for ab in mon.abilities or []:
+                name = ab.get("name", "").strip()
+                text = ab.get("text", "").strip()
+                full = f"{name}: {text}" if name else text
+                _, _, lines = measure_wrapped_text(draw, full, font, text_col_w)
+                total += len(lines) * (lh + abilities_gap) + 2
+            return total
+
+        # Cap ability font growth (tuned for A4/3x3 at 300dpi; scales with card size)
+        abilities_max_font = max(18, int(LH * 0.028))
+
+        lo, hi = 16, min(int(max(24, abilities_h)), abilities_max_font)
+        best_sz = lo
+        while lo <= hi:
+            mid = (lo + hi) // 2
+            f = fit_font(stats_font_path, mid)
+            if abilities_total_height(f) <= abilities_h:
+                best_sz = mid
+                lo = mid + 1
+            else:
+                hi = mid - 1
+
+        body_font = fit_font(stats_font_path, best_sz)
+
+        # If abilities content is small (common when there is only 1 short trait),
+        # shrink the abilities block and transfer the freed height to Actions.
+        # This keeps abilities readable without giving it excessive "breathing" space.
+        needed_h = abilities_total_height(body_font)
+        # Keep a small cushion so the block doesn't feel cramped.
+        effective_abilities_h = min(abilities_h, max(0, needed_h + 6))
+        # Don't shrink below a minimal readable block height.
+        effective_abilities_h = max(effective_abilities_h, min(abilities_h, int(LH * 0.06)))
+
+        slack = abilities_h - effective_abilities_h
+        if slack > 0 and actions_h > 0:
+            abilities_h = effective_abilities_h
+            actions_h += slack
+            heights["abilities"] = abilities_h
+            heights["actions"] = actions_h
+
         ty = section_header("Abilities", ty)
         abil_start = ty
-    # Use a slightly tighter line gap for abilities so dense rules text
-    # doesn't look overly airy compared to Actions.
-    abilities_gap = 0
-
-    # Determine a font size that fits all ability texts within abilities_h when possible
-    def abilities_total_height(font: ImageFont.FreeTypeFont) -> int:
-        lh = line_height_for(font)
-        total = 0
+        name_color = (30, 20, 10, 255)
+        text_color = (50, 40, 30, 255)
+        line_h = line_height_for(body_font)
+        used_h = 0
         for ab in mon.abilities or []:
+            if used_h >= abilities_h:
+                break
             name = ab.get("name", "").strip()
             text = ab.get("text", "").strip()
             full = f"{name}: {text}" if name else text
-            _, _, lines = measure_wrapped_text(draw, full, font, text_col_w)
-            total += len(lines) * (lh + abilities_gap) + 2
-        return total
-    lo, hi = 16, int(max(24, abilities_h))
-    best_sz = lo
-    while lo <= hi:
-        mid = (lo + hi) // 2
-        f = fit_font(stats_font_path, mid)
-        if abilities_total_height(f) <= abilities_h:
-            best_sz = mid
-            lo = mid + 1
-        else:
-            hi = mid - 1
-    body_font = fit_font(stats_font_path, best_sz)
-    name_color = (30, 20, 10, 255)
-    text_color = (50, 40, 30, 255)
-    line_h = line_height_for(body_font)
-    used_h = 0
-    for ab in mon.abilities or []:
-        if used_h >= abilities_h:
-            break
-        name = ab.get("name", "").strip()
-        text = ab.get("text", "").strip()
-        full = f"{name}: {text}" if name else text
-        _, _, lines = measure_wrapped_text(draw, full, body_font, text_col_w)
-        for idx, line in enumerate(lines):
-            if used_h + line_h > abilities_h:
-                break
-            # Draw the full line in normal body color first
-            draw.text((text_col_x, ty), line, font=body_font, fill=text_color)
-            # On the first line, if there is a name, overdraw just the
-            # name portion in a darker color with a slight offset to
-            # create a bold effect for the ability name only.
-            if idx == 0 and name:
-                name_prefix = f"{name}: "
-                draw.text((text_col_x, ty), name_prefix, font=body_font, fill=name_color)
-                draw.text((text_col_x + 1, ty), name_prefix, font=body_font, fill=name_color)
-            ty += line_h + abilities_gap
-            used_h += line_h + abilities_gap
-        ty += 2
-    # Advance to end of allocated block (only changes ty meaningfully when
-    # abilities_h > 0; abil_start is initial ty otherwise)
-    ty = abil_start + abilities_h
-    if abilities_h > 0:
+            _, _, lines = measure_wrapped_text(draw, full, body_font, text_col_w)
+            for idx, line in enumerate(lines):
+                if used_h + line_h > abilities_h:
+                    break
+                # Draw the full line in normal body color first
+                draw.text((text_col_x, ty), line, font=body_font, fill=text_color)
+                # On the first line, if there is a name, overdraw just the
+                # name portion in a darker color with a slight offset to
+                # create a bold effect for the ability name only.
+                if idx == 0 and name:
+                    name_prefix = f"{name}: "
+                    draw.text((text_col_x, ty), name_prefix, font=body_font, fill=name_color)
+                    draw.text((text_col_x + 1, ty), name_prefix, font=body_font, fill=name_color)
+                ty += line_h + abilities_gap
+                used_h += line_h + abilities_gap
+            ty += 2
+        # Advance to end of allocated (possibly shrunken) block.
+        ty = abil_start + abilities_h
         previous_section_drawn = True
 
     # Actions block (maximize font while fitting total wrapped lines)

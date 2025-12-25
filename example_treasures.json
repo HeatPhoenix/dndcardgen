@@ -204,7 +204,7 @@
   "name": "SCROLL OF WATER WALK",
     "effect": "A scroll that teaches your mage or cleric the spell Water Walk. This spell allows (as ritual) up to 5 willing creatures to walk on water for 1 floor. Spell is cancelled if caster dies.",
     "lore": "Rumor has it that this spell was once used on an aquatic monster to force it to surface. It's normally used to cross water safely, though.",
-  "image": "treasure_img/scrollofwaterwalk.png"
+  "image": "treasure_img/scroll_of_waterwalk.png"
   },
   {
     "id": "24",
