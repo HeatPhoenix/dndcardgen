@@ -8,7 +8,7 @@
     "lore": "Walking Mushrooms are the dungeon's natural air purifiers and decomposers. They're not aggressive, but their spores are irritating and mildly toxic. The dungeon ecosystem depends on their presence. Due to the nature of the fibres in their bodies, horizontal and diagonal slashes are less effective on them.",
     "culinary_use": "Mushroom steaks (texture of portobello, nutty flavor when cooked with adventurer's butter or monster fat). Grants temporary HP equal to 1d6 when eaten. The spore-producing cap can be dried and used as a seasoning—grants advantage on next Constitution save for 1 floor.",
     "statblock": {
-      "Armor Class": "12",
+      "Armor Class": "10",
       "Hit Points": "22 (3d10 + 6)",
       "Speed": "0 ft.",
       "STR": "10 (+0)",
@@ -25,7 +25,7 @@
     "actions": [
       {
         "name": "Spore Cloud (Recharge 5–6)",
-        "text": "Each creature within 10 ft. of the mushroom must make a DC 12 Con save, taking 5 (2d4) poison damage and being poisoned for 1 minute on a failure, or half damage and not poisoned on a success."
+        "text": "Each creature within 10 ft. of the mushroom must make a DC 12 Con save, taking 8 (3d4) poison damage and being poisoned for 1 minute on a failure, or half damage and not poisoned on a success."
       }
     ],
     "background": "#ddeedd",
@@ -130,10 +130,6 @@
       {
         "name": "Terrifying Scream (Recharge 5–6)",
         "text": "Each creature within 30 ft. of the mandrake that can hear it must make a DC 13 Wis save. On a failure, the creature is frightened for 1 minute and can repeat the save at the end of each of its turns, ending the effect on a success. Once a creature succeeds on the save or the effect ends for it, it is immune to this mandrake's scream for 24 hours."
-      },
-      {
-        "name": "Root Lash",
-        "text": "Melee Weapon Attack: +3 to hit, reach 10 ft., one target. Hit: 6 (2d4 + 2) bludgeoning damage, and the target is grappled (escape DC 12)."
       }
     ],
     "background": "#eaddff",
@@ -152,8 +148,8 @@
     "lore": "Living Armor resemble hollow suits of armor that move by themselves, and until recently were thought to be actual suits of armor animated by an unknown sorcerer. However, they are in actuality a kind of mollusk that mimics armor. They consist of colonies of individuals that gather together when older, linking up their bodies, and then move by contracting themselves like muscles. Like land snails, they drown if placed in water.",
     "culinary_use": "Living Armor are similar to mollusks, and can be cooked as such. If the helmet is cooked whole, however, the smell will get sealed inside and it will taste rather musty.",
     "statblock": {
-      "Armor Class": "18",
-      "Hit Points": "33 (6d10 + 6)",
+      "Armor Class": "14 (16)",
+      "Hit Points": "43 (6d10 + 6) (+6)",
       "Speed": "25 ft.",
       "STR": "16 (+3)",
       "DEX": "10 (+0)",
@@ -164,6 +160,7 @@
       "Damage Immunities": "Poison, Psychic",
       "Damage Resistances": "Nonmagical bludgeoning, piercing, and slashing",
       "Condition Immunities": "Charmed, Exhaustion, Frightened, Paralyzed, Petrified, Poisoned",
+      "Vulnerabilities": "fire, electric",
       "Senses": "Blindsight 60 ft., passive Perception 11",
       "Challenge": "1 (200 XP)"
     },
@@ -171,20 +168,24 @@
       {
         "name": "Stewed Armor",
         "text": "If fire remains in contact with the armor, the mollusks inside cook through, instantly defeating it and leaving the meat edible."
+      },
+      {
+        "name": "Lightningrod",
+        "text": "Electric attacks chain between living armors, and each take half damage from an electric attack that hits another living armor within 15 ft. of it."
       }
     ],
     "actions": [
       {
-        "name": "Multiattack",
+        "name": "Multiattack (Gold Armor)",
         "text": "The armor makes two attacks."
       },
       {
-        "name": "Slam",
-        "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage."
+        "name": "Shield Slam",
+        "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 10 (3d6 + 3) bludgeoning damage."
       },
       {
-        "name": "Halberd",
-        "text": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 12 (2d8 + 3) slashing damage."
+        "name": "Zweihander",
+        "text": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 12 (3d8 + 3) slashing damage."
       }
     ],
     "background": "#ddddee",
@@ -267,7 +268,7 @@
       "Speed": "20 ft., swim 40 ft.",
       "STR": "16 (+3)",
       "DEX": "14 (+2)",
-      "CON": "145(+2)",
+      "CON": "14 (+2)",
       "INT": "4 (-3)",
       "WIS": "12 (+1)",
       "CHA": "6 (-2)",
@@ -293,11 +294,11 @@
       },
       {
         "name": "Tail",
-        "text": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 10 (2d6 + 3) bludgeoning damage, and the target is grappled (escape DC 13). Until this grapple ends, the target is restrained. The Kelpie can have up to two creatures grappled at once, and when it moves, grappled creatures move with it."
+        "text": "Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 10 (3d6 + 3) bludgeoning damage, and the target is grappled (escape DC 13). Until this grapple ends, the target is restrained. The Kelpie can have up to two creatures grappled at once, and when it moves, grappled creatures move with it."
       },
       {
         "name": "Drag Into Water (Recharge 5-6)",
-        "text": "The Kelpie targets a creature it can see within 10 ft.; the target must make a DC 13 Str save or be pulled up to 10 ft. toward accessible water and knocked prone."
+        "text": "The Kelpie targets a creature it can see within 10 ft.; the target must make a DC 15 Str save or be pulled up to 10 ft. toward accessible water and knocked prone."
       }
     ],
     "background": "#cceef6",
@@ -342,15 +343,11 @@
     "actions": [
       {
         "name": "Multiattack",
-        "text": "The mermaid makes two attacks: one with its bite and one with its claws."
+        "text": "The mermaid makes two attacks: two bites."
       },
       {
         "name": "Bite",
         "text": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 8 (1d8 + 4) piercing damage."
-      },
-      {
-        "name": "Claws",
-        "text": "Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 9 (1d10 + 4) slashing damage."
       },
       {
         "name": "Mesmerizing Song (Recharge 5–6)",
@@ -373,8 +370,8 @@
     "lore": "A plant monster that resembles the body of a beautiful young humanoid, deeply attuned to the forest and dungeon flora around it.",
     "culinary_use": null,
     "statblock": {
-      "Armor Class": "15 (natural armor)",
-      "Hit Points": "71 (11d10 + 22)",
+      "Armor Class": "13 (natural armor)",
+      "Hit Points": "45 (6d10 + 12)",
       "Speed": "30 ft.",
       "STR": "12 (+1)",
       "DEX": "14 (+2)",
@@ -425,7 +422,7 @@
     "culinary_use": null,
     "statblock": {
       "Armor Class": "14",
-      "Hit Points": "59 (7d12 + 21)",
+      "Hit Points": "66 (7d12 + 21)",
       "Speed": "20 ft., fly 40 ft.",
       "STR": "14 (+2)",
       "DEX": "15 (+2)",
@@ -443,8 +440,8 @@
         "text": "The Cockatrice senses the body heat of creatures within 60 ft. as if it had truesight."
       },
       {
-        "name": "Reactive Strikes",
-        "text": "Whenever a non-ally within 5 ft. moves away from it, the Cockatrice can make a talon attack against that creature as a reaction."
+        "name": "Easily Intimidated",
+        "text": "If a non-ally attempts to intimidate the Cockatrice, it has disadvantage on saving throws against being frightened."
       },
       {
         "name": "Legendary Resistance (1/day)",
@@ -457,16 +454,16 @@
         "text": "The Cockatrice makes one front attack and one back attack."
       },
       {
-        "name": "Peck",
-        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 7 (1d8 + 2) piercing damage, and the target must succeed on a DC 14 Constitution save or begin to turn to stone and is restrained. The creature must repeat the save at the start of its next turn, becoming petrified on a failure or ending the effect on a success."
+        "name": "Talons",
+        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 14 (3d6 + 4) slashing damage."
       },
       {
-        "name": "Talons",
-        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 8 (2d4 + 2) slashing damage, and the target is grappled (escape DC 12). If the target is a Medium or smaller creature, it is also restrained until the grapple ends."
+        "name": "Snake Bite",
+        "text": "Melee Weapon Attack: +4 to hit, reach 5 ft., one target. Hit: 15 (2d12 + 4) poison damage."
       },
       {
         "name": "Venomous Spit (Recharge 5-6)",
-        "text": "Ranged Weapon Attack: +4 to hit, range 30 ft., one target. Hit: 11 (2d10) poison damage, and the target must make a DC 14 Con save or begin to turn to stone as with the bite."
+        "text": "Ranged Weapon Attack: +4 to hit, range 30 ft., one target. Hit: 17 (3d10) poison damage, and the target must make a DC 14 Con save or begin to turn to stone as with the bite."
       }
     ],
     "background": "#f5f0d0",
@@ -486,7 +483,7 @@
     "culinary_use": "Minotaur can be butchered much like beef; the ribs roast into rich racks of red meat, while the tougher shank and shoulder are ideal for slow-cooked stews or ground into Hamburg steaks.",
     "statblock": {
       "Armor Class": "15 (thick hide, hardened muscle)",
-      "Hit Points": "95 (10d12 + 30)",
+      "Hit Points": "67 (8d12 + 15)",
       "Speed": "40 ft.",
       "STR": "20 (+5)",
       "DEX": "12 (+1)",
@@ -496,7 +493,6 @@
       "CHA": "8 (−1)",
       "Skills": "Athletics +8, Perception +3",
       "Senses": "Darkvision 60 ft., passive Perception 13",
-      "Languages": "Understands Common, cannot speak it clearly",
       "Challenge": "5 (1,800 XP)"
     },
     "abilities": [
@@ -512,15 +508,15 @@
     "actions": [
       {
         "name": "Gore",
-        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 15 (2d8 + 6) piercing damage. If the minotaur moved at least 20 ft. straight toward the target this turn, the target takes an extra 7 (2d6) damage and must make a DC 15 Str save or be knocked prone."
+        "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 15 (2d8 + 6) piercing damage. If the minotaur moved at least 20 ft. straight toward the target this turn, the target takes an extra 7 (2d6) damage and must make a DC 15 Str save or be knocked prone."
       },
       {
         "name": "Hammerfist",
-        "text": "Melee Weapon Attack: +8 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) bludgeoning damage, and the target cannot take reactions until the start of its next turn as the blow rattles bone and armor."
+        "text": "Melee Weapon Attack: +5 to hit, reach 5 ft., one target. Hit: 13 (2d6 + 6) bludgeoning damage, and the target cannot take reactions until the start of its next turn as the blow rattles bone and armor."
       },
       {
         "name": "Rend and Roar (Recharge 5–6)",
-        "text": "The minotaur makes one Gore and one Hammerfist attack against different targets it can see. Each creature hit must make a DC 13 Wis save or be frightened of the minotaur until the end of its next turn."
+        "text": "The minotaur rams enemies in a straight line for 40 ft. Each creature hit must make a DC 13 Wis save or be frightened of the minotaur until the end of its next turn."
       }
     ],
     "background": "#fbe4d5",
@@ -551,7 +547,7 @@
       "Saving Throws": "INT +7, WIS +6",
       "Skills": "Arcana +7, Insight +6, Deception +6",
       "Immunities": "Charmed, Exhaustion",
-      "Resistances": "Cold, fire, lightning (within the dungeon)",
+      "Resistances": "Magical damage",
       "Senses": "Truesight 120 ft., passive Perception 13",
       "Languages": "All",
       "Challenge": "12 (8,400 XP)"
@@ -573,11 +569,11 @@
       },
       {
         "name": "Arcane Bolt",
-        "text": "Melee Spell Attack: +7 to hit, reach 5 ft., one target. Hit: 13 (2d8 + 4) psychic damage."
+        "text": "Melee Spell Attack: +7 to hit, reach 5 ft., one target. Hit: 24 (5d8 + 4) psychic damage."
       },
       {
         "name": "Spellcasting",
-        "text": "Thistle is a 9th-level spellcaster (spell save DC 15) with the following spells prepared: At will—mage hand, mage hand legerdemain, prestidigitation, message; 1st (4 slots)—shield, magic missile, sleep, misdirection; 2nd (3)—scorching ray, mirror image, misty step; 3rd (3)—counterspell, fireball, summon undead; 4th (3)—dimension door, polymorph, greater invisibility; 5th (1)—telekinesis."
+        "text": "Thistle is a 9th-level spellcaster (spell save DC 15) with the following spells prepared: At will—mage hand, mage hand legerdemain, prestidigitation; 1st (4 slots)—shield, magic missile, sleep, misdirection; 2nd (3)—scorching ray, mirror image, misty step; 3rd (3)—counterspell, fireball, summon undead; 4th (3)—dimension door, polymorph, greater invisibility; 5th (1)—telekinesis."
       },
       {
         "name": "Psychological Attack (Recharge 5-6)",
